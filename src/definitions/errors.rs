@@ -56,7 +56,7 @@ use thiserror::Error;
 pub enum CidrError {
     /// Indicates that the provided CIDR string does not follow the correct format.
     ///
-    /// The format should be IP_ADDRESS/PREFIX_LENGTH, such as "192.168.1.0/24".
+    /// The format should be `IP_ADDRESS/PREFIX_LENGTH`, such as "192.168.1.0/24".
     #[error("Invalid CIDR format: {0}")]
     InvalidFormat(String),
 
