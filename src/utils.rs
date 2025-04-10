@@ -33,7 +33,7 @@ use std::hash::{Hash, Hasher};
 use std::str::FromStr;
 use url::Url;
 
-/// A wrapper type for fancy_regex::Regex that implements Serialize, Deserialize, PartialEq, Eq
+/// A wrapper type for `fancy_regex::Regex` that implements Serialize, Deserialize, PartialEq, Eq
 ///
 /// This wrapper allows storing and serializing regular expressions by storing
 /// the pattern string alongside the compiled regex object.

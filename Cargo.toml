@@ -73,3 +73,16 @@
     panic            = "abort"
     codegen-units    = 1
     incremental      = false
+
+[lints]
+
+    [lints.rust]
+        rust-2024-compatibility = "deny"
+        unsafe_code             = "allow"
+
+    [lints.clippy]
+        pedantic   = "warn"
+        suspicious = "warn"
+        complexity = "warn"
+        perf       = "warn"
+        cargo      = "warn"

@@ -185,16 +185,15 @@ async fn main() {
         ""
     };
 
-    if log_level.is_empty() {
-        unsafe {
-            std::env::remove_var("RUST_LOG");
-        }
+    // Initialize logger with explicit configuration
+    let level_filter = if log_level.is_empty() {
+        log::LevelFilter::Info
     } else {
-        unsafe {
-            std::env::set_var("RUST_LOG", log_level);
-        }
-    }
-    pretty_env_logger::init();
+        log::LevelFilter::from_str(log_level).unwrap_or(log::LevelFilter::Info)
+    };
+    pretty_env_logger::formatted_builder()
+        .filter_level(level_filter)
+        .init();
 
     // Process command and arguments
     match cli.command {
@@ -212,7 +211,7 @@ async fn main() {
                 let filestore = match Filestore::with_config(config) {
                     Ok(fs) => fs,
                     Err(e) => {
-                        eprintln!("Failed to create filestore: {}", e);
+                        eprintln!("Failed to create filestore: {e}");
                         std::process::exit(1);
                     }
                 };
@@ -220,7 +219,7 @@ async fn main() {
                 // Create default configuration files
                 let default_config = AppConfig::default();
                 if let Err(e) = filestore.save_config(&default_config, "config") {
-                    eprintln!("Failed to save configuration: {}", e);
+                    eprintln!("Failed to save configuration: {e}");
                     std::process::exit(1);
                 }
 
@@ -563,7 +562,13 @@ fn parse_proxy_url(url: &str) -> Result<Proxy, String> {
         return Err("Invalid proxy URL format. Expected: protocol://ip:port".to_string());
     }
 
-    let protocol = match parts[0].to_lowercase().as_str() {
+    let lower = if !parts.is_empty() {
+        parts[0].to_lowercase()
+    } else {
+        return Err("No protocol specified in proxy URL".to_string());
+    };
+
+    let protocol = match lower.as_str() {
         "http" => ProxyType::Http,
         "https" => ProxyType::Https,
         "socks4" => ProxyType::Socks4,

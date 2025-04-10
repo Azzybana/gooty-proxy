@@ -51,6 +51,9 @@
 //! }
 //! ```
 
+//#![allow(unsafe_code)]
+#![warn(missing_docs)]
+
 use mimalloc::MiMalloc;
 
 #[global_allocator]
