@@ -132,7 +132,7 @@ impl Proxy {
     ///     AnonymityLevel::Anonymous,
     /// );
     /// ```
-    pub fn new(
+    #[must_use] pub fn new(
         proxy_type: ProxyType,
         address: IpAddr,
         port: u16,
@@ -188,7 +188,7 @@ impl Proxy {
     ///     AnonymityLevel::Anonymous
     /// ).with_auth("username".to_string(), "password".to_string());
     /// ```
-    pub fn with_auth(mut self, username: String, password: String) -> Self {
+    #[must_use] pub fn with_auth(mut self, username: String, password: String) -> Self {
         self.username = Some(username);
         self.password = Some(password);
         self
@@ -203,7 +203,7 @@ impl Proxy {
     /// # Returns
     ///
     /// Self with country information set
-    pub fn with_country(mut self, country: String) -> Self {
+    #[must_use] pub fn with_country(mut self, country: String) -> Self {
         self.country = Some(country);
         self
     }
@@ -217,7 +217,7 @@ impl Proxy {
     /// # Returns
     ///
     /// Self with hostname information set
-    pub fn with_hostname(mut self, hostname: String) -> Self {
+    #[must_use] pub fn with_hostname(mut self, hostname: String) -> Self {
         self.hostname = Some(hostname);
         self
     }
@@ -231,7 +231,7 @@ impl Proxy {
     /// # Returns
     ///
     /// Self with organization information set
-    pub fn with_organization(mut self, organization: String) -> Self {
+    #[must_use] pub fn with_organization(mut self, organization: String) -> Self {
         self.organization = Some(organization);
         self
     }
@@ -291,7 +291,7 @@ impl Proxy {
     }
 
     /// Calculates the success rate of the proxy based on check history
-    pub fn check_success_rate(&self) -> f64 {
+    #[must_use] pub fn check_success_rate(&self) -> f64 {
         if self.check_count == 0 {
             return 0.0;
         }
@@ -301,7 +301,7 @@ impl Proxy {
     }
 
     /// Calculates the success rate of the proxy based on usage history
-    pub fn use_success_rate(&self) -> f64 {
+    #[must_use] pub fn use_success_rate(&self) -> f64 {
         if self.use_count == 0 {
             return 0.0;
         }
@@ -311,9 +311,9 @@ impl Proxy {
     }
 
     /// Returns a connection string representation of the proxy
-    pub fn to_connection_string(&self) -> String {
+    #[must_use] pub fn to_connection_string(&self) -> String {
         let auth_part = match (&self.username, &self.password) {
-            (Some(u), Some(p)) => format!("{}:{}@", u, p),
+            (Some(u), Some(p)) => format!("{u}:{p}@"),
             _ => String::new(),
         };
 
@@ -385,7 +385,7 @@ impl Proxy {
     }
 
     /// Gets the full IP metadata if available
-    pub fn get_ip_metadata(&self) -> Option<&IpMetadata> {
+    #[must_use] pub fn get_ip_metadata(&self) -> Option<&IpMetadata> {
         self.ip_metadata.as_ref()
     }
 }

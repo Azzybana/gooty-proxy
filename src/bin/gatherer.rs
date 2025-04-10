@@ -223,7 +223,7 @@ async fn main() {
                     std::process::exit(1);
                 }
 
-                println!("Created default configuration in {}", path);
+                println!("Created default configuration in {path}");
                 std::process::exit(0);
             }
 
@@ -237,7 +237,7 @@ async fn main() {
                 let filestore = match Filestore::with_config(config) {
                     Ok(fs) => fs,
                     Err(e) => {
-                        eprintln!("Failed to access filestore: {}", e);
+                        eprintln!("Failed to access filestore: {e}");
                         std::process::exit(1);
                     }
                 };
@@ -245,11 +245,11 @@ async fn main() {
                 // Try to load and validate configuration
                 match filestore.load_config("config") {
                     Ok(_) => {
-                        println!("Configuration in {} is valid", path);
+                        println!("Configuration in {path} is valid");
                         std::process::exit(0);
                     }
                     Err(e) => {
-                        eprintln!("Configuration validation failed: {}", e);
+                        eprintln!("Configuration validation failed: {e}");
                         std::process::exit(1);
                     }
                 }
@@ -261,19 +261,19 @@ async fn main() {
                 let mut manager = match ProxyManager::new() {
                     Ok(m) => m,
                     Err(e) => {
-                        eprintln!("Failed to initialize proxy manager: {}", e);
+                        eprintln!("Failed to initialize proxy manager: {e}");
                         std::process::exit(1);
                     }
                 };
 
                 // Initialize judge and sleuth
                 if let Err(e) = manager.init_judge().await {
-                    eprintln!("Failed to initialize judge: {}", e);
+                    eprintln!("Failed to initialize judge: {e}");
                     std::process::exit(1);
                 }
 
                 if let Err(e) = manager.init_sleuth() {
-                    eprintln!("Failed to initialize sleuth: {}", e);
+                    eprintln!("Failed to initialize sleuth: {e}");
                     std::process::exit(1);
                 }
 
@@ -281,16 +281,16 @@ async fn main() {
                 let proxy = match parse_proxy_url(&proxy_url) {
                     Ok(p) => p,
                     Err(e) => {
-                        eprintln!("Invalid proxy URL: {}", e);
+                        eprintln!("Invalid proxy URL: {e}");
                         std::process::exit(1);
                     }
                 };
 
-                println!("Testing proxy: {}", proxy_url);
+                println!("Testing proxy: {proxy_url}");
 
                 // Add proxy to manager
                 if let Err(e) = manager.add_proxy(proxy) {
-                    eprintln!("Failed to add proxy: {}", e);
+                    eprintln!("Failed to add proxy: {e}");
                     std::process::exit(1);
                 }
 
@@ -299,13 +299,13 @@ async fn main() {
 
                 // Check proxy connectivity and anonymity
                 if let Err(e) = manager.check_proxy(&proxy_id).await {
-                    eprintln!("Proxy test failed: {}", e);
+                    eprintln!("Proxy test failed: {e}");
                     std::process::exit(1);
                 }
 
                 // Enrich with IP metadata
                 if let Err(e) = manager.enrich_proxy(&proxy_id).await {
-                    eprintln!("Failed to enrich proxy data: {}", e);
+                    eprintln!("Failed to enrich proxy data: {e}");
                     std::process::exit(1);
                 }
 
@@ -318,23 +318,23 @@ async fn main() {
                     println!("Anonymity Level: {}", proxy.anonymity);
 
                     if let Some(latency) = proxy.latency_ms {
-                        println!("Latency: {}ms", latency);
+                        println!("Latency: {latency}ms");
                     }
 
                     if let Some(country) = &proxy.country {
-                        println!("Country: {}", country);
+                        println!("Country: {country}");
                     }
 
                     if let Some(org) = &proxy.organization {
-                        println!("Organization: {}", org);
+                        println!("Organization: {org}");
                     }
 
                     if let Some(asn) = &proxy.asn {
-                        println!("ASN: {}", asn);
+                        println!("ASN: {asn}");
                     }
 
                     if let Some(hostname) = &proxy.hostname {
-                        println!("Hostname: {}", hostname);
+                        println!("Hostname: {hostname}");
                     }
 
                     println!("\nTest Statistics:");
@@ -351,12 +351,12 @@ async fn main() {
                                 Ok(mut proxies) => {
                                     proxies.push(proxy.clone());
                                     if let Err(e) = filestore.save_proxies(&proxies, "proxies") {
-                                        eprintln!("Failed to save proxy: {}", e);
+                                        eprintln!("Failed to save proxy: {e}");
                                     } else {
                                         println!("\nProxy saved to list successfully");
                                     }
                                 }
-                                Err(e) => eprintln!("Failed to load proxy list: {}", e),
+                                Err(e) => eprintln!("Failed to load proxy list: {e}"),
                             }
                         }
                     }
@@ -383,7 +383,7 @@ async fn main() {
             }) {
                 Ok(fs) => fs,
                 Err(e) => {
-                    eprintln!("Failed to initialize filestore: {}", e);
+                    eprintln!("Failed to initialize filestore: {e}");
                     std::process::exit(1);
                 }
             };
@@ -396,7 +396,7 @@ async fn main() {
             ) {
                 Ok(s) => s,
                 Err(e) => {
-                    eprintln!("Failed to create source: {}", e);
+                    eprintln!("Failed to create source: {e}");
                     std::process::exit(1);
                 }
             };
@@ -406,7 +406,7 @@ async fn main() {
                 match ProxyManager::new() {
                     Ok(m) => m,
                     Err(e) => {
-                        eprintln!("Failed to create proxy manager: {}", e);
+                        eprintln!("Failed to create proxy manager: {e}");
                         std::process::exit(1);
                     }
                 }
@@ -417,7 +417,7 @@ async fn main() {
             // Initialize judge if needed
             if judge || detail {
                 if let Err(e) = manager.init_judge().await {
-                    eprintln!("Failed to initialize judge: {}", e);
+                    eprintln!("Failed to initialize judge: {e}");
                     std::process::exit(1);
                 }
             }
@@ -425,7 +425,7 @@ async fn main() {
             // Initialize sleuth if detailed information is requested
             if detail {
                 if let Err(e) = manager.init_sleuth() {
-                    eprintln!("Failed to initialize sleuth: {}", e);
+                    eprintln!("Failed to initialize sleuth: {e}");
                     std::process::exit(1);
                 }
             }
@@ -434,18 +434,18 @@ async fn main() {
             let requestor = match Requestor::new() {
                 Ok(r) => r,
                 Err(e) => {
-                    eprintln!("Failed to create requestor: {}", e);
+                    eprintln!("Failed to create requestor: {e}");
                     std::process::exit(1);
                 }
             };
 
             // Fetch proxies from the source
-            println!("Scraping proxies from {}", scrape);
+            println!("Scraping proxies from {scrape}");
             let (proxies, raw_response) = match source.fetch_proxies_with_response(&requestor).await
             {
                 Ok((proxies, response)) => (proxies, response),
                 Err(e) => {
-                    eprintln!("Failed to fetch proxies: {}", e);
+                    eprintln!("Failed to fetch proxies: {e}");
                     std::process::exit(1);
                 }
             };
@@ -456,12 +456,12 @@ async fn main() {
             if dump {
                 let timestamp = chrono::Utc::now().format("%Y%m%d-%H%M%S");
                 let sanitized_url = utils::sanitize_url_for_filename(&scrape);
-                let dump_filename = format!("{}-{}.txt", timestamp, sanitized_url);
+                let dump_filename = format!("{timestamp}-{sanitized_url}.txt");
 
                 if let Err(e) = std::fs::write(dump_filename.clone(), raw_response) {
-                    eprintln!("Failed to dump response: {}", e);
+                    eprintln!("Failed to dump response: {e}");
                 } else {
-                    println!("Response dumped to {}", dump_filename);
+                    println!("Response dumped to {dump_filename}");
                 }
             }
 
@@ -482,7 +482,7 @@ async fn main() {
                 // Check all proxies with progress
                 if let Err(e) = manager.check_all_proxies(&mut proxies, 10).await {
                     pb.finish_and_clear();
-                    eprintln!("Failed to verify proxies: {}", e);
+                    eprintln!("Failed to verify proxies: {e}");
                     std::process::exit(1);
                 }
                 pb.finish_with_message("Proxy testing complete");
@@ -502,7 +502,7 @@ async fn main() {
 
                     if let Err(e) = manager.enrich_all_proxies(&mut proxies, 10).await {
                         pb.finish_and_clear();
-                        eprintln!("Failed to enrich proxies: {}", e);
+                        eprintln!("Failed to enrich proxies: {e}");
                         std::process::exit(1);
                     }
                     pb.finish_with_message("Detail gathering complete");
@@ -518,7 +518,7 @@ async fn main() {
                 // Save working proxies if not dry run
                 if !dry {
                     if let Err(e) = filestore.save_proxies(&proxies, "proxies") {
-                        eprintln!("Failed to save proxies: {}", e);
+                        eprintln!("Failed to save proxies: {e}");
                         std::process::exit(1);
                     }
                 }
@@ -530,7 +530,7 @@ async fn main() {
                 let mut sources = match filestore.load_sources("sources") {
                     Ok(s) => s,
                     Err(e) => {
-                        eprintln!("Failed to load sources: {}", e);
+                        eprintln!("Failed to load sources: {e}");
                         Vec::new()
                     }
                 };
@@ -543,7 +543,7 @@ async fn main() {
                 }
 
                 if let Err(e) = filestore.save_sources(&sources, "sources") {
-                    eprintln!("Failed to save sources: {}", e);
+                    eprintln!("Failed to save sources: {e}");
                     std::process::exit(1);
                 }
 
@@ -562,10 +562,10 @@ fn parse_proxy_url(url: &str) -> Result<Proxy, String> {
         return Err("Invalid proxy URL format. Expected: protocol://ip:port".to_string());
     }
 
-    let lower = if !parts.is_empty() {
-        parts[0].to_lowercase()
-    } else {
+    let lower = if parts.is_empty() {
         return Err("No protocol specified in proxy URL".to_string());
+    } else {
+        parts[0].to_lowercase()
     };
 
     let protocol = match lower.as_str() {
@@ -602,7 +602,7 @@ fn get_filestore(data_dir: &str) -> Option<Filestore> {
     }) {
         Ok(fs) => Some(fs),
         Err(e) => {
-            eprintln!("Failed to initialize filestore: {}", e);
+            eprintln!("Failed to initialize filestore: {e}");
             None
         }
     }

@@ -75,7 +75,7 @@ impl ProxyType {
     /// assert_eq!(ProxyType::Http.default_port(), 8080);
     /// assert_eq!(ProxyType::Socks5.default_port(), 1080);
     /// ```
-    pub fn default_port(&self) -> u16 {
+    #[must_use] pub fn default_port(&self) -> u16 {
         match self {
             ProxyType::Http => 8080,
             ProxyType::Https => 8443,
@@ -99,7 +99,7 @@ impl fmt::Display for ProxyType {
 impl std::str::FromStr for ProxyType {
     type Err = String;
 
-    /// Attempts to convert a string to a ProxyType
+    /// Attempts to convert a string to a `ProxyType`
     ///
     /// # Arguments
     ///
@@ -115,7 +115,7 @@ impl std::str::FromStr for ProxyType {
             "https" => Ok(ProxyType::Https),
             "socks4" => Ok(ProxyType::Socks4),
             "socks5" => Ok(ProxyType::Socks5),
-            _ => Err(format!("Unknown proxy type: {}", s)),
+            _ => Err(format!("Unknown proxy type: {s}")),
         }
     }
 }
@@ -164,7 +164,7 @@ impl fmt::Display for AnonymityLevel {
 impl std::str::FromStr for AnonymityLevel {
     type Err = String;
 
-    /// Converts a string to an AnonymityLevel
+    /// Converts a string to an `AnonymityLevel`
     ///
     /// # Arguments
     ///
@@ -179,7 +179,7 @@ impl std::str::FromStr for AnonymityLevel {
             "transparent" => Ok(AnonymityLevel::Transparent),
             "anonymous" => Ok(AnonymityLevel::Anonymous),
             "elite" | "high_anonymous" | "high anonymous" => Ok(AnonymityLevel::Elite),
-            _ => Err(format!("Unknown anonymity level: {}", s)),
+            _ => Err(format!("Unknown anonymity level: {s}")),
         }
     }
 }

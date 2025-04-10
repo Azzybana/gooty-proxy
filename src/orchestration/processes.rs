@@ -50,7 +50,7 @@ use std::sync::Arc;
 ///
 /// # Returns
 ///
-/// A configured ProgressBar instance ready for tracking progress.
+/// A configured `ProgressBar` instance ready for tracking progress.
 fn create_progress_bar(total: u64) -> ProgressBar {
     let progress = ProgressBar::new(total);
     progress.set_style(
@@ -95,8 +95,7 @@ pub async fn verify_proxies(
 
     let total = proxies.len();
     info!(
-        "Verifying {} proxies with concurrency {}",
-        total, concurrency
+        "Verifying {total} proxies with concurrency {concurrency}"
     );
 
     // Create a progress bar and wrap in Arc for safe sharing
@@ -121,15 +120,12 @@ pub async fn verify_proxies(
             // Update progress regardless of result
             progress.inc(1);
 
-            match result {
-                Ok(anonymity) => {
-                    proxy.anonymity = anonymity;
-                    (proxy, true)
-                }
-                Err(_) => {
-                    proxy.record_check_failure();
-                    (proxy, false)
-                }
+            if let Ok(anonymity) = result {
+                proxy.anonymity = anonymity;
+                (proxy, true)
+            } else {
+                proxy.record_check_failure();
+                (proxy, false)
             }
         }
         .boxed()
@@ -151,13 +147,11 @@ pub async fn verify_proxies(
     }
 
     progress.finish_with_message(format!(
-        "Verified {}/{} ({} successful)",
-        total, total, success_count
+        "Verified {total}/{total} ({success_count} successful)"
     ));
 
     info!(
-        "Verified {}/{} proxies ({} successful)",
-        total, total, success_count
+        "Verified {total}/{total} proxies ({success_count} successful)"
     );
 
     Ok(())
@@ -196,8 +190,7 @@ pub async fn enrich_proxies(
 
     let total = proxies.len();
     info!(
-        "Enriching {} proxies with concurrency {}",
-        total, concurrency
+        "Enriching {total} proxies with concurrency {concurrency}"
     );
 
     // Create a progress bar and wrap in Arc for safe sharing
@@ -251,13 +244,11 @@ pub async fn enrich_proxies(
     }
 
     progress.finish_with_message(format!(
-        "Enriched {}/{} ({} successful)",
-        total, total, success_count
+        "Enriched {total}/{total} ({success_count} successful)"
     ));
 
     info!(
-        "Enriched {}/{} proxies ({} successful)",
-        total, total, success_count
+        "Enriched {total}/{total} proxies ({success_count} successful)"
     );
 
     Ok(())
@@ -293,8 +284,7 @@ pub async fn fetch_from_sources(
 
     let total = sources.len();
     info!(
-        "Fetching from {} sources with concurrency {}",
-        total, concurrency
+        "Fetching from {total} sources with concurrency {concurrency}"
     );
 
     // Create a progress bar and wrap in Arc for safe sharing

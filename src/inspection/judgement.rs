@@ -96,7 +96,7 @@ impl Judge {
     pub async fn new() -> JudgementResult<Self> {
         let judge_urls = crate::defaults::PROXY_JUDGE_URLS
             .iter()
-            .map(|url| url.to_string())
+            .map(|url| (*url).to_string())
             .collect();
 
         let requestor = Requestor::with_timeout(crate::defaults::DEFAULT_VALIDATION_TIMEOUT_SECS)?;
@@ -245,7 +245,7 @@ impl Judge {
     /// # Returns
     ///
     /// A slice containing all the judge URLs currently configured
-    pub fn get_judge_urls(&self) -> &[String] {
+    #[must_use] pub fn get_judge_urls(&self) -> &[String] {
         &self.judge_urls
     }
 }

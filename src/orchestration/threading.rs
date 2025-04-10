@@ -49,7 +49,7 @@ pub struct TaskManager {
 
 impl TaskManager {
     /// Create a new task manager
-    pub fn new() -> Self {
+    #[must_use] pub fn new() -> Self {
         Self::default()
     }
 

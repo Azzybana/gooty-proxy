@@ -49,7 +49,7 @@ impl Location {
     /// # Returns
     ///
     /// A new Location with only the country field set
-    pub fn with_country(country: String) -> Self {
+    #[must_use] pub fn with_country(country: String) -> Self {
         Location {
             country: Some(country),
             city: None,
@@ -71,7 +71,7 @@ impl Location {
     /// # Returns
     ///
     /// A new Location with the specified fields set
-    pub fn new(
+    #[must_use] pub fn new(
         country: Option<String>,
         state: Option<String>,
         city: Option<String>,
@@ -94,8 +94,8 @@ impl Location {
     ///
     /// # Returns
     ///
-    /// Self with the facility_name field updated
-    pub fn with_facility(mut self, facility_name: String) -> Self {
+    /// Self with the `facility_name` field updated
+    #[must_use] pub fn with_facility(mut self, facility_name: String) -> Self {
         self.facility_name = Some(facility_name);
         self
     }
@@ -105,7 +105,7 @@ impl Location {
     /// # Returns
     ///
     /// True if at least one field is populated, false otherwise
-    pub fn has_info(&self) -> bool {
+    #[must_use] pub fn has_info(&self) -> bool {
         self.country.is_some()
             || self.state.is_some()
             || self.city.is_some()
@@ -118,7 +118,7 @@ impl Location {
     /// # Returns
     ///
     /// A formatted string with available location information
-    pub fn to_formatted_string(&self) -> String {
+    #[must_use] pub fn to_formatted_string(&self) -> String {
         let mut parts = Vec::new();
 
         if let Some(city) = &self.city {

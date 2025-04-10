@@ -212,7 +212,7 @@ pub mod regex_patterns {
 
     /// Pattern with proxy type (http|https|socks4|socks5)://ip:port
     ///
-    /// Matches protocol-specified proxies like "http://127.0.0.1:8080"
+    /// Matches protocol-specified proxies like "<http://127.0.0.1:8080>"
     pub const TYPED_PROXY: &str =
         r"(https?|socks[45])://(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):(\d{2,5})";
 

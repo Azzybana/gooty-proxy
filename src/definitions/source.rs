@@ -124,7 +124,7 @@ impl Source {
     }
 
     /// Returns the success rate of using this source
-    pub fn success_rate(&self) -> f64 {
+    #[must_use] pub fn success_rate(&self) -> f64 {
         if self.use_count == 0 {
             return 0.0;
         }
@@ -160,7 +160,7 @@ impl Source {
     }
 
     /// Returns a constructed URL with parameters
-    pub fn get_full_url(&self) -> String {
+    #[must_use] pub fn get_full_url(&self) -> String {
         if self.parameters.is_empty() {
             return self.url.clone();
         }
@@ -169,7 +169,7 @@ impl Source {
         let params: Vec<String> = self
             .parameters
             .iter()
-            .map(|(k, v)| format!("{}={}", k, v))
+            .map(|(k, v)| format!("{k}={v}"))
             .collect();
 
         if url.contains('?') {

@@ -6,7 +6,7 @@
 //! ## Components
 //!
 //! * **Filestore** - A struct for managing file-based storage
-//! * **AppConfig** - A struct for application-wide configuration settings
+//! * **`AppConfig`** - A struct for application-wide configuration settings
 //!
 //! ## Examples
 //!
@@ -219,7 +219,7 @@ impl Filestore {
         // Create the directory if it doesn't exist
         if !base_dir.exists() {
             fs::create_dir_all(&base_dir).map_err(|e| {
-                FilestoreError::IoError(format!("Failed to create directory: {:?}", e))
+                FilestoreError::IoError(format!("Failed to create directory: {e:?}"))
             })?;
         }
 
@@ -239,7 +239,7 @@ impl Filestore {
     /// # Errors
     ///
     /// Returns an error if:
-    /// * The file doesn't exist and create_defaults_if_missing is false
+    /// * The file doesn't exist and `create_defaults_if_missing` is false
     /// * The file exists but cannot be read
     /// * The file content is not valid TOML
     /// * The TOML cannot be deserialized into proxies
@@ -251,20 +251,19 @@ impl Filestore {
                 // Create an empty proxies file
                 self.save_proxies(&Vec::new(), name)?;
                 return Ok(Vec::new());
-            } else {
-                return Err(FilestoreError::FileNotFound(
-                    file_path.to_string_lossy().to_string(),
-                ));
             }
+            return Err(FilestoreError::FileNotFound(
+                file_path.to_string_lossy().to_string(),
+            ));
         }
 
         // Read the file content
         let content = fs::read_to_string(&file_path)
-            .map_err(|e| FilestoreError::IoError(format!("Failed to read file: {:?}", e)))?;
+            .map_err(|e| FilestoreError::IoError(format!("Failed to read file: {e:?}")))?;
 
         // Parse TOML
         let container: ProxiesContainer = toml::from_str(&content)
-            .map_err(|e| FilestoreError::ParseError(format!("Failed to parse TOML: {:?}", e)))?;
+            .map_err(|e| FilestoreError::ParseError(format!("Failed to parse TOML: {e:?}")))?;
 
         Ok(container.proxies)
     }
@@ -292,7 +291,7 @@ impl Filestore {
         if let Some(parent) = file_path.parent() {
             if !parent.exists() {
                 fs::create_dir_all(parent).map_err(|e| {
-                    FilestoreError::IoError(format!("Failed to create directory: {:?}", e))
+                    FilestoreError::IoError(format!("Failed to create directory: {e:?}"))
                 })?;
             }
         }
@@ -306,17 +305,17 @@ impl Filestore {
         // Serialize to TOML
         let toml_content = if self.config.pretty_print {
             toml::to_string_pretty(&container).map_err(|e| {
-                FilestoreError::SerializationError(format!("Failed to serialize to TOML: {:?}", e))
+                FilestoreError::SerializationError(format!("Failed to serialize to TOML: {e:?}"))
             })?
         } else {
             toml::to_string(&container).map_err(|e| {
-                FilestoreError::SerializationError(format!("Failed to serialize to TOML: {:?}", e))
+                FilestoreError::SerializationError(format!("Failed to serialize to TOML: {e:?}"))
             })?
         };
 
         // Write to file
         fs::write(&file_path, toml_content)
-            .map_err(|e| FilestoreError::IoError(format!("Failed to write file: {:?}", e)))?;
+            .map_err(|e| FilestoreError::IoError(format!("Failed to write file: {e:?}")))?;
 
         Ok(())
     }
@@ -334,7 +333,7 @@ impl Filestore {
     /// # Errors
     ///
     /// Returns an error if:
-    /// * The file doesn't exist and create_defaults_if_missing is false
+    /// * The file doesn't exist and `create_defaults_if_missing` is false
     /// * The file exists but cannot be read
     /// * The file content is not valid TOML
     /// * The TOML cannot be deserialized into sources
@@ -346,20 +345,19 @@ impl Filestore {
                 // Create an empty sources file
                 self.save_sources(&Vec::new(), name)?;
                 return Ok(Vec::new());
-            } else {
-                return Err(FilestoreError::FileNotFound(
-                    file_path.to_string_lossy().to_string(),
-                ));
             }
+            return Err(FilestoreError::FileNotFound(
+                file_path.to_string_lossy().to_string(),
+            ));
         }
 
         // Read the file content
         let content = fs::read_to_string(&file_path)
-            .map_err(|e| FilestoreError::IoError(format!("Failed to read file: {:?}", e)))?;
+            .map_err(|e| FilestoreError::IoError(format!("Failed to read file: {e:?}")))?;
 
         // Parse TOML
         let container: SourcesContainer = toml::from_str(&content)
-            .map_err(|e| FilestoreError::ParseError(format!("Failed to parse TOML: {:?}", e)))?;
+            .map_err(|e| FilestoreError::ParseError(format!("Failed to parse TOML: {e:?}")))?;
 
         // Recompile regex patterns in sources
         let mut sources = container.sources;
@@ -395,7 +393,7 @@ impl Filestore {
         if let Some(parent) = file_path.parent() {
             if !parent.exists() {
                 fs::create_dir_all(parent).map_err(|e| {
-                    FilestoreError::IoError(format!("Failed to create directory: {:?}", e))
+                    FilestoreError::IoError(format!("Failed to create directory: {e:?}"))
                 })?;
             }
         }
@@ -409,17 +407,17 @@ impl Filestore {
         // Serialize to TOML
         let toml_content = if self.config.pretty_print {
             toml::to_string_pretty(&container).map_err(|e| {
-                FilestoreError::SerializationError(format!("Failed to serialize to TOML: {:?}", e))
+                FilestoreError::SerializationError(format!("Failed to serialize to TOML: {e:?}"))
             })?
         } else {
             toml::to_string(&container).map_err(|e| {
-                FilestoreError::SerializationError(format!("Failed to serialize to TOML: {:?}", e))
+                FilestoreError::SerializationError(format!("Failed to serialize to TOML: {e:?}"))
             })?
         };
 
         // Write to file
         fs::write(&file_path, toml_content)
-            .map_err(|e| FilestoreError::IoError(format!("Failed to write file: {:?}", e)))?;
+            .map_err(|e| FilestoreError::IoError(format!("Failed to write file: {e:?}")))?;
 
         Ok(())
     }
@@ -432,15 +430,15 @@ impl Filestore {
     ///
     /// # Returns
     ///
-    /// An AppConfig object loaded from the file
+    /// An `AppConfig` object loaded from the file
     ///
     /// # Errors
     ///
     /// Returns an error if:
-    /// * The file doesn't exist and create_defaults_if_missing is false
+    /// * The file doesn't exist and `create_defaults_if_missing` is false
     /// * The file exists but cannot be read
     /// * The file content is not valid TOML
-    /// * The TOML cannot be deserialized into AppConfig
+    /// * The TOML cannot be deserialized into `AppConfig`
     pub fn load_config(&self, name: &str) -> FilestoreResult<AppConfig> {
         let file_path = self.get_file_path(name, "toml");
 
@@ -450,20 +448,19 @@ impl Filestore {
                 let default_config = AppConfig::default();
                 self.save_config(&default_config, name)?;
                 return Ok(default_config);
-            } else {
-                return Err(FilestoreError::FileNotFound(
-                    file_path.to_string_lossy().to_string(),
-                ));
             }
+            return Err(FilestoreError::FileNotFound(
+                file_path.to_string_lossy().to_string(),
+            ));
         }
 
         // Read the file content
         let content = fs::read_to_string(&file_path)
-            .map_err(|e| FilestoreError::IoError(format!("Failed to read file: {:?}", e)))?;
+            .map_err(|e| FilestoreError::IoError(format!("Failed to read file: {e:?}")))?;
 
         // Parse TOML
         let config: AppConfig = toml::from_str(&content)
-            .map_err(|e| FilestoreError::ParseError(format!("Failed to parse TOML: {:?}", e)))?;
+            .map_err(|e| FilestoreError::ParseError(format!("Failed to parse TOML: {e:?}")))?;
 
         Ok(config)
     }
@@ -472,7 +469,7 @@ impl Filestore {
     ///
     /// # Arguments
     ///
-    /// * `config` - AppConfig object to save
+    /// * `config` - `AppConfig` object to save
     /// * `name` - Base name of the file (without extension)
     ///
     /// # Returns
@@ -491,7 +488,7 @@ impl Filestore {
         if let Some(parent) = file_path.parent() {
             if !parent.exists() {
                 fs::create_dir_all(parent).map_err(|e| {
-                    FilestoreError::IoError(format!("Failed to create directory: {:?}", e))
+                    FilestoreError::IoError(format!("Failed to create directory: {e:?}"))
                 })?;
             }
         }
@@ -499,17 +496,17 @@ impl Filestore {
         // Serialize to TOML
         let toml_content = if self.config.pretty_print {
             toml::to_string_pretty(config).map_err(|e| {
-                FilestoreError::SerializationError(format!("Failed to serialize to TOML: {:?}", e))
+                FilestoreError::SerializationError(format!("Failed to serialize to TOML: {e:?}"))
             })?
         } else {
             toml::to_string(config).map_err(|e| {
-                FilestoreError::SerializationError(format!("Failed to serialize to TOML: {:?}", e))
+                FilestoreError::SerializationError(format!("Failed to serialize to TOML: {e:?}"))
             })?
         };
 
         // Write to file
         fs::write(&file_path, toml_content)
-            .map_err(|e| FilestoreError::IoError(format!("Failed to write file: {:?}", e)))?;
+            .map_err(|e| FilestoreError::IoError(format!("Failed to write file: {e:?}")))?;
 
         Ok(())
     }
@@ -519,7 +516,7 @@ impl Filestore {
     /// # Returns
     ///
     /// Reference to the base directory path
-    pub fn get_base_dir(&self) -> &PathBuf {
+    #[must_use] pub fn get_base_dir(&self) -> &PathBuf {
         &self.base_dir
     }
 
@@ -528,7 +525,7 @@ impl Filestore {
     /// # Returns
     ///
     /// Reference to the current configuration
-    pub fn get_config(&self) -> &FilestoreConfig {
+    #[must_use] pub fn get_config(&self) -> &FilestoreConfig {
         &self.config
     }
 
@@ -543,6 +540,6 @@ impl Filestore {
     ///
     /// The complete file path
     fn get_file_path(&self, name: &str, extension: &str) -> PathBuf {
-        self.base_dir.join(format!("{}.{}", name, extension))
+        self.base_dir.join(format!("{name}.{extension}"))
     }
 }

@@ -79,7 +79,7 @@ impl Organization {
     /// # Returns
     ///
     /// A new Organization instance with the specified name and ASN
-    pub fn new(name: Option<String>, asn: Option<String>) -> Self {
+    #[must_use] pub fn new(name: Option<String>, asn: Option<String>) -> Self {
         Organization {
             name,
             asn,
@@ -96,7 +96,7 @@ impl Organization {
     /// # Returns
     ///
     /// Self with the parent organization set
-    pub fn with_parent(mut self, parent: Organization) -> Self {
+    #[must_use] pub fn with_parent(mut self, parent: Organization) -> Self {
         self.parent = Some(Box::new(parent));
         self
     }
@@ -106,7 +106,7 @@ impl Organization {
     /// # Returns
     ///
     /// `true` if this organization has a parent, `false` otherwise
-    pub fn has_parent(&self) -> bool {
+    #[must_use] pub fn has_parent(&self) -> bool {
         self.parent.is_some()
     }
 
@@ -116,7 +116,7 @@ impl Organization {
     ///
     /// The ASN as a u32 if it exists and can be parsed as a number,
     /// or None if the ASN is not set or cannot be parsed
-    pub fn get_asn_number(&self) -> Option<u32> {
+    #[must_use] pub fn get_asn_number(&self) -> Option<u32> {
         self.asn.as_ref().and_then(|asn| asn.parse::<u32>().ok())
     }
 }
@@ -207,8 +207,8 @@ impl OwnershipLookup {
     ///
     /// # Returns
     ///
-    /// A new OwnershipLookup instance
-    pub fn new() -> Self {
+    /// A new `OwnershipLookup` instance
+    #[must_use] pub fn new() -> Self {
         let client = Client::builder()
             .timeout(Duration::from_secs(10))
             .build()
@@ -225,8 +225,8 @@ impl OwnershipLookup {
     ///
     /// # Returns
     ///
-    /// A new OwnershipLookup instance with the specified client
-    pub fn with_client(client: Client) -> Self {
+    /// A new `OwnershipLookup` instance with the specified client
+    #[must_use] pub fn with_client(client: Client) -> Self {
         OwnershipLookup { client }
     }
 
@@ -248,7 +248,7 @@ impl OwnershipLookup {
     /// * The service returns an error status code
     pub async fn lookup_asn(&self, ip: &IpAddr) -> OwnershipResult<Option<String>> {
         // Use ipinfo.io's free API to get ASN information
-        let url = format!("https://ipinfo.io/{}/json", ip);
+        let url = format!("https://ipinfo.io/{ip}/json");
 
         let response = self
             .client
@@ -305,7 +305,7 @@ impl OwnershipLookup {
     /// * The service returns an error status code
     pub async fn lookup_organization(&self, ip: &IpAddr) -> OwnershipResult<Option<Organization>> {
         // Use ipinfo.io's free API to get organization information
-        let url = format!("https://ipinfo.io/{}/json", ip);
+        let url = format!("https://ipinfo.io/{ip}/json");
 
         let response = self
             .client
@@ -417,13 +417,13 @@ impl OwnershipLookup {
         // Ensure it's a valid number
         let asn_num = match asn_number.parse::<u32>() {
             Ok(n) => n,
-            Err(_) => return Err(OwnershipError::ParseError(format!("Invalid ASN: {}", asn))),
+            Err(_) => return Err(OwnershipError::ParseError(format!("Invalid ASN: {asn}"))),
         };
 
         // Use ipinfo.io's free API to get ASN information
         // Note: This is a simplified implementation as detailed ASN lookup
         // typically requires a paid API or more specific data source
-        let url = format!("https://ipinfo.io/AS{}/json", asn_num);
+        let url = format!("https://ipinfo.io/AS{asn_num}/json");
 
         let response = self
             .client

@@ -6,7 +6,7 @@
 //! ## Components
 //!
 //! * **Sleuth** - A struct for performing IP lookups
-//! * **IpMetadata** - A struct for storing comprehensive IP metadata
+//! * **`IpMetadata`** - A struct for storing comprehensive IP metadata
 //!
 //! ## Examples
 //!
@@ -76,7 +76,7 @@ pub struct IpMetadata {
 }
 
 impl Default for IpMetadata {
-    /// Creates a default IpMetadata instance
+    /// Creates a default `IpMetadata` instance
     ///
     /// The default instance uses 0.0.0.0 as the IP address with all other fields set to None.
     fn default() -> Self {
@@ -139,7 +139,7 @@ impl Sleuth {
     /// # Returns
     ///
     /// A new Sleuth instance configured with default settings
-    pub fn new() -> Self {
+    #[must_use] pub fn new() -> Self {
         let client = Client::builder()
             .timeout(Duration::from_secs(10))
             .build()
@@ -163,7 +163,7 @@ impl Sleuth {
     /// # Returns
     ///
     /// A new Sleuth instance configured with the provided HTTP client
-    pub fn with_client(client: Client) -> Self {
+    #[must_use] pub fn with_client(client: Client) -> Self {
         Sleuth {
             client: client.clone(),
             ownership_lookup: OwnershipLookup::with_client(client),
@@ -191,7 +191,7 @@ impl Sleuth {
     /// * The response cannot be parsed
     pub async fn lookup_hostname(&self, ip: &IpAddr) -> SleuthResult<Option<String>> {
         // Use ipinfo.io's free API to get hostname information
-        let url = format!("https://ipinfo.io/{}/json", ip);
+        let url = format!("https://ipinfo.io/{ip}/json");
 
         let response = self
             .client
@@ -246,7 +246,7 @@ impl Sleuth {
     /// * The response cannot be parsed
     pub async fn lookup_cidr(&self, ip: &IpAddr) -> SleuthResult<Option<String>> {
         // Use ipinfo.io's free API to get network information
-        let url = format!("https://ipinfo.io/{}/json", ip);
+        let url = format!("https://ipinfo.io/{ip}/json");
 
         let response = self
             .client
@@ -345,7 +345,7 @@ impl Sleuth {
     /// * The response cannot be parsed
     pub async fn lookup_location(&self, ip: &IpAddr) -> SleuthResult<Option<Location>> {
         // Use ipinfo.io's free API to get location information
-        let url = format!("https://ipinfo.io/{}/json", ip);
+        let url = format!("https://ipinfo.io/{ip}/json");
 
         let response = self
             .client
@@ -422,7 +422,7 @@ impl Sleuth {
     /// * The response cannot be parsed
     pub async fn lookup_ip_metadata(&self, ip: &IpAddr) -> SleuthResult<IpMetadata> {
         // Use ipinfo.io's free API to get all information in one request
-        let url = format!("https://ipinfo.io/{}/json", ip);
+        let url = format!("https://ipinfo.io/{ip}/json");
 
         let response = self
             .client
@@ -545,7 +545,7 @@ impl Sleuth {
     /// # Returns
     ///
     /// `true` if the IP is in the CIDR range, `false` otherwise
-    pub fn is_ip_in_cidr(&self, ip: &IpAddr, cidr_str: &str) -> bool {
+    #[must_use] pub fn is_ip_in_cidr(&self, ip: &IpAddr, cidr_str: &str) -> bool {
         cidr::helpers::is_ip_in_cidr(ip, cidr_str)
     }
 }

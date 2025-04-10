@@ -44,18 +44,18 @@ pub struct ConfigLoader {
 }
 
 impl ConfigLoader {
-    /// Create a new ConfigLoader with the specified directory and default filename
+    /// Create a new `ConfigLoader` with the specified directory and default filename
     pub fn new<P: AsRef<Path>>(config_dir: P) -> ConfigResult<Self> {
         Self::with_filename(config_dir, "config.toml")
     }
 
-    /// Create a new ConfigLoader with a specified directory and filename
+    /// Create a new `ConfigLoader` with a specified directory and filename
     pub fn with_filename<P: AsRef<Path>>(config_dir: P, filename: &str) -> ConfigResult<Self> {
         let config_dir = config_dir.as_ref().to_path_buf();
 
         // Create the directory if it doesn't exist
         if !config_dir.exists() {
-            info!("Creating configuration directory: {:?}", config_dir);
+            info!("Creating configuration directory: {config_dir:?}");
             fs::create_dir_all(&config_dir).map_err(ConfigError::IoError)?;
         }
 
@@ -80,7 +80,7 @@ impl ConfigLoader {
     }
 
     /// Get the current configuration
-    pub fn get_config(&self) -> &AppConfig {
+    #[must_use] pub fn get_config(&self) -> &AppConfig {
         &self.config
     }
 
@@ -94,7 +94,7 @@ impl ConfigLoader {
         let config_path = self.config_dir.join(&self.config_filename);
         Self::save_to_file(&config, &config_path)?;
         self.config = config;
-        debug!("Configuration updated and saved to {:?}", config_path);
+        debug!("Configuration updated and saved to {config_path:?}");
         Ok(())
     }
 
@@ -103,10 +103,10 @@ impl ConfigLoader {
         let config_path = self.config_dir.join(&self.config_filename);
         if config_path.exists() {
             self.config = Self::load_from_file(&config_path)?;
-            debug!("Configuration reloaded from {:?}", config_path);
+            debug!("Configuration reloaded from {config_path:?}");
             Ok(())
         } else {
-            warn!("Configuration file not found at {:?}", config_path);
+            warn!("Configuration file not found at {config_path:?}");
             Err(ConfigError::MissingConfig(config_path))
         }
     }
@@ -115,7 +115,7 @@ impl ConfigLoader {
     pub fn save(&self) -> ConfigResult<()> {
         let config_path = self.config_dir.join(&self.config_filename);
         Self::save_to_file(&self.config, &config_path)?;
-        debug!("Configuration saved to {:?}", config_path);
+        debug!("Configuration saved to {config_path:?}");
         Ok(())
     }
 
@@ -128,18 +128,18 @@ impl ConfigLoader {
     }
 
     /// Get the path to the configuration file
-    pub fn get_config_path(&self) -> PathBuf {
+    #[must_use] pub fn get_config_path(&self) -> PathBuf {
         self.config_dir.join(&self.config_filename)
     }
 
     /// Check if the configuration file exists
-    pub fn config_exists(&self) -> bool {
+    #[must_use] pub fn config_exists(&self) -> bool {
         self.get_config_path().exists()
     }
 
     /// Load configuration from a file
     fn load_from_file(path: &Path) -> ConfigResult<AppConfig> {
-        debug!("Loading configuration from {:?}", path);
+        debug!("Loading configuration from {path:?}");
         let content = fs::read_to_string(path).map_err(ConfigError::IoError)?;
 
         let config: AppConfig = toml::from_str(&content).map_err(ConfigError::TomlDeError)?;
@@ -149,7 +149,7 @@ impl ConfigLoader {
 
     /// Save configuration to a file
     fn save_to_file(config: &AppConfig, path: &Path) -> ConfigResult<()> {
-        debug!("Saving configuration to {:?}", path);
+        debug!("Saving configuration to {path:?}");
         // Ensure parent directory exists
         if let Some(parent) = path.parent() {
             if !parent.exists() {
@@ -177,8 +177,7 @@ impl ConfigLoader {
 
         if !valid_log_levels.contains(&log_level.as_str()) {
             return Err(ConfigError::InvalidValue(format!(
-                "Invalid log_level: {}. Must be one of: error, warn, info, debug, trace",
-                log_level
+                "Invalid log_level: {log_level}. Must be one of: error, warn, info, debug, trace"
             )));
         }
 
@@ -217,7 +216,7 @@ impl ConfigLoader {
     /// Create a snapshot of the configuration with the current timestamp
     pub fn create_snapshot(&self) -> ConfigResult<PathBuf> {
         let timestamp = chrono::Utc::now().format("%Y%m%d_%H%M%S");
-        let snapshot_filename = format!("config_backup_{}.toml", timestamp);
+        let snapshot_filename = format!("config_backup_{timestamp}.toml");
         let snapshot_path = self.config_dir.join("backups").join(&snapshot_filename);
 
         // Ensure the backups directory exists
@@ -228,7 +227,7 @@ impl ConfigLoader {
         }
 
         Self::save_to_file(&self.config, &snapshot_path)?;
-        info!("Configuration snapshot created at {:?}", snapshot_path);
+        info!("Configuration snapshot created at {snapshot_path:?}");
 
         Ok(snapshot_path)
     }
@@ -282,7 +281,7 @@ impl ConfigLoader {
         let snapshot_config = Self::load_from_file(snapshot_path)?;
         self.update_config(snapshot_config)?;
 
-        info!("Configuration restored from snapshot {:?}", snapshot_path);
+        info!("Configuration restored from snapshot {snapshot_path:?}");
         Ok(())
     }
 }

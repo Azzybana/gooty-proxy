@@ -76,14 +76,12 @@ impl Cidr {
         match network_address {
             IpAddr::V4(_) if prefix_length > 32 => {
                 return Err(CidrError::InvalidPrefixLength(format!(
-                    "IPv4 prefix length must be <= 32, got {}",
-                    prefix_length
+                    "IPv4 prefix length must be <= 32, got {prefix_length}"
                 )));
             }
             IpAddr::V6(_) if prefix_length > 128 => {
                 return Err(CidrError::InvalidPrefixLength(format!(
-                    "IPv6 prefix length must be <= 128, got {}",
-                    prefix_length
+                    "IPv6 prefix length must be <= 128, got {prefix_length}"
                 )));
             }
             _ => {}
@@ -122,7 +120,7 @@ impl Cidr {
     /// assert!(cidr.contains(&ip_in));
     /// assert!(!cidr.contains(&ip_out));
     /// ```
-    pub fn contains(&self, ip: &IpAddr) -> bool {
+    #[must_use] pub fn contains(&self, ip: &IpAddr) -> bool {
         // Ensure IP versions match
         match (ip, &self.network_address) {
             (IpAddr::V4(_), IpAddr::V4(_)) | (IpAddr::V6(_), IpAddr::V6(_)) => {}
@@ -177,7 +175,7 @@ impl Cidr {
     /// # Returns
     ///
     /// A reference to the network IP address.
-    pub fn get_network_address(&self) -> &IpAddr {
+    #[must_use] pub fn get_network_address(&self) -> &IpAddr {
         &self.network_address
     }
 
@@ -186,7 +184,7 @@ impl Cidr {
     /// # Returns
     ///
     /// The prefix length as a u8 value (e.g., 24 for a /24 network).
-    pub fn get_prefix_length(&self) -> u8 {
+    #[must_use] pub fn get_prefix_length(&self) -> u8 {
         self.prefix_length
     }
 
@@ -195,7 +193,7 @@ impl Cidr {
     /// # Returns
     ///
     /// The CIDR in string format like "192.168.1.0/24".
-    pub fn to_string(&self) -> &str {
+    #[must_use] pub fn to_string(&self) -> &str {
         &self.cidr_string
     }
 }
@@ -205,7 +203,7 @@ impl Cidr {
 /// This module provides utility functions for parsing and working with CIDR
 /// notation strings without needing to create full CIDR objects.
 pub mod helpers {
-    use super::*;
+    use super::{Cidr, IpAddr};
 
     /// Extracts the network part of a CIDR notation.
     ///
@@ -225,7 +223,7 @@ pub mod helpers {
     /// let ip = helpers::extract_network_from_cidr("192.168.1.0/24").unwrap();
     /// assert_eq!(ip, "192.168.1.0");
     /// ```
-    pub fn extract_network_from_cidr(cidr: &str) -> Option<String> {
+    #[must_use] pub fn extract_network_from_cidr(cidr: &str) -> Option<String> {
         let parts: Vec<&str> = cidr.split('/').collect();
         if parts.len() == 2 {
             Some(parts[0].to_string())
@@ -252,7 +250,7 @@ pub mod helpers {
     /// let prefix = helpers::extract_prefix_from_cidr("192.168.1.0/24").unwrap();
     /// assert_eq!(prefix, 24);
     /// ```
-    pub fn extract_prefix_from_cidr(cidr: &str) -> Option<u8> {
+    #[must_use] pub fn extract_prefix_from_cidr(cidr: &str) -> Option<u8> {
         let parts: Vec<&str> = cidr.split('/').collect();
         if parts.len() == 2 {
             parts[1].parse().ok()
@@ -281,7 +279,7 @@ pub mod helpers {
     /// let ip = IpAddr::V4(Ipv4Addr::new(192, 168, 1, 10));
     /// assert!(helpers::is_ip_in_cidr(&ip, "192.168.1.0/24"));
     /// ```
-    pub fn is_ip_in_cidr(ip: &IpAddr, cidr: &str) -> bool {
+    #[must_use] pub fn is_ip_in_cidr(ip: &IpAddr, cidr: &str) -> bool {
         match Cidr::to_cidr(cidr) {
             Ok(cidr_block) => cidr_block.contains(ip),
             Err(_) => false,
