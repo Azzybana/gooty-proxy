@@ -235,13 +235,13 @@ impl Requestor {
     /// # Errors
     ///
     /// Returns an error if the request fails to send or times out.
-    pub async fn measure_latency(&self, url: &str) -> RequestResult<u32> {
+    pub async fn measure_latency(&self, url: &str) -> RequestResult<u128> {
         let start = Instant::now();
 
         // Make a HEAD request to minimize data transfer
         let _ = self.client.head(url).send().await?;
 
         let elapsed = start.elapsed();
-        Ok(elapsed.as_millis() as u32)
+        Ok(elapsed.as_millis())
     }
 }
