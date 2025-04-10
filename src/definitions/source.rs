@@ -395,13 +395,10 @@ impl Source {
             .map_err(|e| SourceError::FetchFailure(e.to_string()))?;
 
         // Extract proxies using regex
-        let regex = match &self.compiled_regex {
-            Some(re) => re,
-            None => {
-                return Err(SourceError::InvalidRegexPattern(
-                    "Regex not compiled".to_string(),
-                ));
-            }
+        let Some(regex) = &self.compiled_regex else {
+            return Err(SourceError::InvalidRegexPattern(
+                "Regex not compiled".to_string(),
+            ));
         };
 
         // Parse proxies from the response
@@ -417,7 +414,7 @@ impl Source {
                     let proxy_str = m.as_str();
 
                     // Try to parse the proxy string
-                    if let Some(proxy) = self.parse_proxy(proxy_str) {
+                    if let Some(proxy) = Self::parse_proxy(proxy_str) {
                         proxies.push(proxy);
                     }
                 }
@@ -464,13 +461,10 @@ impl Source {
             .map_err(|e| SourceError::FetchFailure(e.to_string()))?;
 
         // Extract proxies using regex
-        let regex = match &self.compiled_regex {
-            Some(re) => re,
-            None => {
-                return Err(SourceError::InvalidRegexPattern(
-                    "Regex not compiled".to_string(),
-                ));
-            }
+        let Some(regex) = &self.compiled_regex else {
+            return Err(SourceError::InvalidRegexPattern(
+                "Regex not compiled".to_string(),
+            ));
         };
 
         // Parse proxies from the response
@@ -482,7 +476,7 @@ impl Source {
             match match_result {
                 Ok(m) => {
                     let proxy_str = m.as_str();
-                    if let Some(proxy) = self.parse_proxy(proxy_str) {
+                    if let Some(proxy) = Self::parse_proxy(proxy_str) {
                         proxies.push(proxy);
                     }
                 }
@@ -507,7 +501,7 @@ impl Source {
     /// # Returns
     ///
     /// Some(Proxy) if parsing succeeds, None otherwise
-    fn parse_proxy(&self, proxy_str: &str) -> Option<Proxy> {
+    fn parse_proxy(proxy_str: &str) -> Option<Proxy> {
         // Simple IP:PORT parsing
         if let Some((ip_str, port_str)) = proxy_str.split_once(':') {
             if let (Ok(ip), Ok(port)) = (IpAddr::from_str(ip_str), port_str.parse::<u16>()) {
