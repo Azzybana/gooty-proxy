@@ -53,6 +53,7 @@
 
 //#![allow(unsafe_code)]
 #![warn(missing_docs)]
+#![allow(clippy::multiple_crate_versions)]
 
 use mimalloc::MiMalloc;
 
