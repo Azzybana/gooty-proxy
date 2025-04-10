@@ -111,6 +111,11 @@ pub struct Source {
 
 impl Source {
     /// Creates a new source with the required fields
+    ///
+    /// # Errors
+    ///
+    /// Returns `SourceError::InvalidUrl` if the provided URL is not valid.
+    /// Returns `SourceError::InvalidRegexPattern` if the regex pattern cannot be compiled.
     pub fn new(
         url: String,
         user_agent: String,
@@ -167,13 +172,13 @@ impl Source {
 
     /// Returns the success rate of using this source
     #[must_use]
-    pub fn success_rate(&self) -> f64 {
+    pub fn success_rate(&self) -> usize {
         if self.use_count == 0 {
-            return 0.0;
+            return 0;
         }
 
         let success_count = self.use_count - self.failure_count;
-        (success_count as f64) / (self.use_count as f64)
+        (success_count) / (self.use_count)
     }
 
     /// Updates the regex pattern and recompiles it
