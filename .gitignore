@@ -4,7 +4,6 @@ release/
 rls/
 *.o
 .vscode/
-.github/
 .ignore/
 Cargo.lock
 data/
