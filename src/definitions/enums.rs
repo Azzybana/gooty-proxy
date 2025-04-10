@@ -75,12 +75,12 @@ impl ProxyType {
     /// assert_eq!(ProxyType::Http.default_port(), 8080);
     /// assert_eq!(ProxyType::Socks5.default_port(), 1080);
     /// ```
-    #[must_use] pub fn default_port(&self) -> u16 {
+    #[must_use]
+    pub fn default_port(&self) -> u16 {
         match self {
             ProxyType::Http => 8080,
             ProxyType::Https => 8443,
-            ProxyType::Socks4 => 1080,
-            ProxyType::Socks5 => 1080,
+            ProxyType::Socks4 | ProxyType::Socks5 => 1080,
         }
     }
 }
@@ -190,13 +190,18 @@ impl Ord for AnonymityLevel {
         // Elite > Anonymous > Transparent
         use std::cmp::Ordering;
         match (self, other) {
-            (AnonymityLevel::Elite, AnonymityLevel::Elite) => Ordering::Equal,
-            (AnonymityLevel::Elite, _) => Ordering::Greater,
-            (AnonymityLevel::Anonymous, AnonymityLevel::Elite) => Ordering::Less,
-            (AnonymityLevel::Anonymous, AnonymityLevel::Anonymous) => Ordering::Equal,
-            (AnonymityLevel::Anonymous, AnonymityLevel::Transparent) => Ordering::Greater,
-            (AnonymityLevel::Transparent, AnonymityLevel::Transparent) => Ordering::Equal,
-            (AnonymityLevel::Transparent, _) => Ordering::Less,
+            // Equal cases
+            (AnonymityLevel::Elite, AnonymityLevel::Elite)
+            | (AnonymityLevel::Anonymous, AnonymityLevel::Anonymous)
+            | (AnonymityLevel::Transparent, AnonymityLevel::Transparent) => Ordering::Equal,
+
+            // Greater than cases
+            (AnonymityLevel::Elite, _)
+            | (AnonymityLevel::Anonymous, AnonymityLevel::Transparent) => Ordering::Greater,
+
+            // Less than cases
+            (AnonymityLevel::Transparent, _)
+            | (AnonymityLevel::Anonymous, AnonymityLevel::Elite) => Ordering::Less,
         }
     }
 }
@@ -210,9 +215,16 @@ impl PartialOrd for AnonymityLevel {
 /// Represents the state of a proxy validation check
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ValidationState {
+    /// Check has not yet started
     Pending,
+
+    /// Check is currently being performed
     InProgress,
+
+    /// Check completed successfully
     Success,
+
+    /// Check failed
     Failed,
 }
 
