@@ -312,7 +312,7 @@ impl fmt::Display for SourceStatus {
 ///     println!("Debug information: {}", "details");
 /// }
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(clap::ValueEnum, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum LogLevel {
     /// Critical errors that may cause application failure
     Error,
@@ -358,6 +358,66 @@ impl fmt::Display for VerificationMethod {
             VerificationMethod::TargetAccess => write!(f, "Target Access"),
             VerificationMethod::AnonymityCheck => write!(f, "Anonymity Check"),
             VerificationMethod::Comprehensive => write!(f, "Comprehensive"),
+        }
+    }
+}
+
+/// # Judgement Mode
+///
+/// Represents different levels of proxy judgement/evaluation intensity.
+///
+/// * `None` - No judgement is performed
+/// * `Quick` - Basic, fast evaluation of proxies
+/// * `Full` - Comprehensive, detailed evaluation of proxies
+///
+/// ## Examples
+///
+/// ```
+/// use gooty_proxy::definitions::enums::JudgementMode;
+///
+/// let mode = JudgementMode::Quick;
+/// assert_eq!(mode as i32, 1);
+/// assert_eq!(mode.to_string(), "Quick");
+/// ```
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum JudgementMode {
+    /// No judgement is performed
+    None = 0,
+    /// Basic, fast evaluation of proxies
+    Quick = 1,
+    /// Comprehensive, detailed evaluation of proxies
+    Full = 2,
+}
+
+impl fmt::Display for JudgementMode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            JudgementMode::None => write!(f, "None"),
+            JudgementMode::Quick => write!(f, "Quick"),
+            JudgementMode::Full => write!(f, "Full"),
+        }
+    }
+}
+
+impl std::str::FromStr for JudgementMode {
+    type Err = String;
+
+    /// Converts a string to a `JudgementMode`
+    ///
+    /// # Arguments
+    ///
+    /// * `s` - The string to convert
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(JudgementMode)` - If the string matches a known judgement mode
+    /// * `Err(String)` - If the string doesn't match any known judgement mode
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "none" | "0" => Ok(JudgementMode::None),
+            "quick" | "1" => Ok(JudgementMode::Quick),
+            "full" | "2" => Ok(JudgementMode::Full),
+            _ => Err(format!("Unknown judgement mode: {s}")),
         }
     }
 }
