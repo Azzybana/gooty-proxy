@@ -759,6 +759,11 @@ impl ProxyManager {
     /// # Errors
     ///
     /// Returns an error if there's a critical failure in the verification process.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `init_judge()` has been called successfully but the internal judge
+    /// is still `None`, which should never happen in practice.
     pub async fn check_all_proxies(
         &mut self,
         proxies: &mut [Proxy],
@@ -799,6 +804,11 @@ impl ProxyManager {
     /// # Errors
     ///
     /// Returns an error if there's a critical failure in the enrichment process.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `init_sleuth()` has been called successfully but the internal sleuth
+    /// is still `None`, which should never happen in practice.
     pub async fn enrich_all_proxies(
         &mut self,
         proxies: &mut [Proxy],

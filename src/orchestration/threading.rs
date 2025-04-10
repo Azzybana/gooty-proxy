@@ -49,7 +49,8 @@ pub struct TaskManager {
 
 impl TaskManager {
     /// Create a new task manager
-    #[must_use] pub fn new() -> Self {
+    #[must_use]
+    pub fn new() -> Self {
         Self::default()
     }
 
@@ -117,6 +118,11 @@ where
 }
 
 /// Execute multiple futures concurrently with a limit on parallelism
+///
+/// # Panics
+///
+/// This function will panic if the semaphore is closed, which can happen
+/// if the semaphore is dropped while permits are still active.
 pub async fn execute_with_concurrency_limit<T, F, Fut>(
     items: Vec<T>,
     concurrency: usize,
