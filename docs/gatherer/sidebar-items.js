@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Commands"],"fn":["get_filestore","main","parse_proxy_url"],"struct":["Cli"]};
+window.SIDEBAR_ITEMS = {"enum":["Commands"],"fn":["get_filestore","handle_config_command","handle_proxy_command","handle_source_command","init_proxy_manager","main","parse_proxy_url","print_proxy_details","save_results","setup_filestore","test_and_enrich_proxies"],"struct":["Cli"]};
