@@ -45,17 +45,31 @@ pub struct ConfigLoader {
 
 impl ConfigLoader {
     /// Create a new `ConfigLoader` with the specified directory and default filename
+    ///
+    /// # Errors
+    ///
+    /// This function will return an error if:
+    /// * The configuration directory cannot be created
+    /// * The configuration file cannot be read or created
+    /// * The configuration file contains invalid TOML
     pub fn new<P: AsRef<Path>>(config_dir: P) -> ConfigResult<Self> {
         Self::with_filename(config_dir, "config.toml")
     }
 
     /// Create a new `ConfigLoader` with a specified directory and filename
+    ///
+    /// # Errors
+    ///
+    /// This function will return an error if:
+    /// * The configuration directory cannot be created
+    /// * The configuration file cannot be read or created
+    /// * The configuration file contains invalid TOML
     pub fn with_filename<P: AsRef<Path>>(config_dir: P, filename: &str) -> ConfigResult<Self> {
         let config_dir = config_dir.as_ref().to_path_buf();
 
         // Create the directory if it doesn't exist
         if !config_dir.exists() {
-            info!("Creating configuration directory: {config_dir:?}");
+            info!("Creating configuration directory: {}", config_dir.display());
             fs::create_dir_all(&config_dir).map_err(ConfigError::IoError)?;
         }
 
@@ -80,7 +94,8 @@ impl ConfigLoader {
     }
 
     /// Get the current configuration
-    #[must_use] pub fn get_config(&self) -> &AppConfig {
+    #[must_use]
+    pub fn get_config(&self) -> &AppConfig {
         &self.config
     }
 
@@ -90,36 +105,64 @@ impl ConfigLoader {
     }
 
     /// Update the configuration and save changes to disk
+    ///
+    /// # Errors
+    ///
+    /// This function will return an error if:
+    /// * The configuration cannot be serialized to TOML
+    /// * The configuration file cannot be written to disk
     pub fn update_config(&mut self, config: AppConfig) -> ConfigResult<()> {
         let config_path = self.config_dir.join(&self.config_filename);
         Self::save_to_file(&config, &config_path)?;
         self.config = config;
-        debug!("Configuration updated and saved to {config_path:?}");
+        debug!(
+            "Configuration updated and saved to {}",
+            config_path.display()
+        );
         Ok(())
     }
 
     /// Reload configuration from disk
+    ///
+    /// # Errors
+    ///
+    /// This function will return an error if:
+    /// * The configuration file doesn't exist
+    /// * The configuration file cannot be read
+    /// * The configuration file contains invalid TOML
     pub fn reload(&mut self) -> ConfigResult<()> {
         let config_path = self.config_dir.join(&self.config_filename);
         if config_path.exists() {
             self.config = Self::load_from_file(&config_path)?;
-            debug!("Configuration reloaded from {config_path:?}");
+            debug!("Configuration reloaded from {}", config_path.display());
             Ok(())
         } else {
-            warn!("Configuration file not found at {config_path:?}");
+            warn!("Configuration file not found at {}", config_path.display());
             Err(ConfigError::MissingConfig(config_path))
         }
     }
 
     /// Save the current configuration to disk
+    ///
+    /// # Errors
+    ///
+    /// This function will return an error if:
+    /// * The configuration cannot be serialized to TOML
+    /// * The configuration file cannot be written to disk
     pub fn save(&self) -> ConfigResult<()> {
         let config_path = self.config_dir.join(&self.config_filename);
         Self::save_to_file(&self.config, &config_path)?;
-        debug!("Configuration saved to {config_path:?}");
+        debug!("Configuration saved to {}", config_path.display());
         Ok(())
     }
 
     /// Reset the configuration to default values and save to disk
+    ///
+    /// # Errors
+    ///
+    /// This function will return an error if:
+    /// * The default configuration cannot be serialized to TOML
+    /// * The configuration file cannot be written to disk
     pub fn reset_to_defaults(&mut self) -> ConfigResult<()> {
         self.config = AppConfig::default();
         self.save()?;
@@ -128,18 +171,26 @@ impl ConfigLoader {
     }
 
     /// Get the path to the configuration file
-    #[must_use] pub fn get_config_path(&self) -> PathBuf {
+    #[must_use]
+    pub fn get_config_path(&self) -> PathBuf {
         self.config_dir.join(&self.config_filename)
     }
 
     /// Check if the configuration file exists
-    #[must_use] pub fn config_exists(&self) -> bool {
+    #[must_use]
+    pub fn config_exists(&self) -> bool {
         self.get_config_path().exists()
     }
 
     /// Load configuration from a file
+    ///
+    /// # Errors
+    ///
+    /// This function will return an error if:
+    /// * The file cannot be read
+    /// * The file contains invalid TOML
     fn load_from_file(path: &Path) -> ConfigResult<AppConfig> {
-        debug!("Loading configuration from {path:?}");
+        debug!("Loading configuration from {}", path.display());
         let content = fs::read_to_string(path).map_err(ConfigError::IoError)?;
 
         let config: AppConfig = toml::from_str(&content).map_err(ConfigError::TomlDeError)?;
@@ -148,8 +199,15 @@ impl ConfigLoader {
     }
 
     /// Save configuration to a file
+    ///
+    /// # Errors
+    ///
+    /// This function will return an error if:
+    /// * The parent directory cannot be created
+    /// * The configuration cannot be serialized to TOML
+    /// * The file cannot be written
     fn save_to_file(config: &AppConfig, path: &Path) -> ConfigResult<()> {
-        debug!("Saving configuration to {path:?}");
+        debug!("Saving configuration to {}", path.display());
         // Ensure parent directory exists
         if let Some(parent) = path.parent() {
             if !parent.exists() {
@@ -170,6 +228,15 @@ impl ConfigLoader {
     }
 
     /// Validate the current configuration
+    ///
+    /// # Errors
+    ///
+    /// This function will return an error if:
+    /// * The log level is invalid
+    /// * The request timeout is zero
+    /// * The parallel validations count is zero
+    /// * The minimum success rate is outside the range 0.0 to 1.0
+    /// * The auto-save interval is zero
     pub fn validate(&self) -> ConfigResult<()> {
         // Validate log level
         let valid_log_levels = ["error", "warn", "info", "debug", "trace"];
@@ -214,6 +281,13 @@ impl ConfigLoader {
     }
 
     /// Create a snapshot of the configuration with the current timestamp
+    ///
+    /// # Errors
+    ///
+    /// This function will return an error if:
+    /// * The backups directory cannot be created
+    /// * The configuration cannot be serialized to TOML
+    /// * The snapshot file cannot be written
     pub fn create_snapshot(&self) -> ConfigResult<PathBuf> {
         let timestamp = chrono::Utc::now().format("%Y%m%d_%H%M%S");
         let snapshot_filename = format!("config_backup_{timestamp}.toml");
@@ -227,12 +301,22 @@ impl ConfigLoader {
         }
 
         Self::save_to_file(&self.config, &snapshot_path)?;
-        info!("Configuration snapshot created at {snapshot_path:?}");
+        info!(
+            "Configuration snapshot created at {}",
+            snapshot_path.display()
+        );
 
         Ok(snapshot_path)
     }
 
     /// List all configuration snapshots
+    ///
+    /// # Errors
+    ///
+    /// This function will return an error if:
+    /// * The backups directory cannot be read
+    /// * There's an error reading directory entries
+    /// * There's an error getting file metadata
     pub fn list_snapshots(&self) -> ConfigResult<Vec<PathBuf>> {
         let backups_dir = self.config_dir.join("backups");
 
@@ -273,6 +357,14 @@ impl ConfigLoader {
     }
 
     /// Restore configuration from a snapshot
+    ///
+    /// # Errors
+    ///
+    /// This function will return an error if:
+    /// * The snapshot file doesn't exist
+    /// * The snapshot file cannot be read
+    /// * The snapshot file contains invalid TOML
+    /// * The restored configuration cannot be saved
     pub fn restore_from_snapshot(&mut self, snapshot_path: &Path) -> ConfigResult<()> {
         if !snapshot_path.exists() {
             return Err(ConfigError::MissingConfig(snapshot_path.to_path_buf()));
@@ -281,7 +373,10 @@ impl ConfigLoader {
         let snapshot_config = Self::load_from_file(snapshot_path)?;
         self.update_config(snapshot_config)?;
 
-        info!("Configuration restored from snapshot {snapshot_path:?}");
+        info!(
+            "Configuration restored from snapshot {}",
+            snapshot_path.display()
+        );
         Ok(())
     }
 }
