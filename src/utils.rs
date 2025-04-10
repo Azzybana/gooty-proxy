@@ -113,6 +113,10 @@ impl SerializableRegex {
     /// # Returns
     ///
     /// A Result containing a boolean indicating whether the pattern matches
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the regex engine encounters an error during matching
     pub fn is_match(&self, text: &str) -> Result<bool, Box<fancy_regex::Error>> {
         self.regex.is_match(text).map_err(Box::new)
     }
@@ -186,6 +190,10 @@ pub fn is_valid_url(url: &str) -> bool {
 /// # Returns
 ///
 /// A compiled Regex if valid, or an error if the pattern is invalid
+///
+/// # Errors
+///
+/// Returns a `UtilError::InvalidRegex` if the pattern is invalid or cannot be compiled
 pub fn validate_regex(pattern: &str) -> UtilResult<Regex> {
     match Regex::new(pattern) {
         Ok(regex) => Ok(regex),
@@ -220,9 +228,8 @@ pub fn get_random_user_agent() -> &'static str {
 #[must_use]
 pub fn sanitize_url_for_filename(url: &str) -> String {
     // Parse the URL to extract just the host and path
-    let parsed = match Url::parse(url) {
-        Ok(parsed) => parsed,
-        Err(_) => return "invalid-url".to_string(),
+    let Ok(parsed) = Url::parse(url) else {
+        return "invalid-url".to_string();
     };
 
     // Get just the hostname
@@ -265,30 +272,4 @@ pub fn is_valid_ip(ip_str: &str) -> bool {
 #[must_use]
 pub fn is_valid_port(port: u16) -> bool {
     port > 0
-}
-
-/// Formats bytes as human-readable sizes
-///
-/// # Arguments
-///
-/// * `bytes` - Number of bytes
-///
-/// # Returns
-///
-/// A human-readable string representing the size
-#[must_use]
-pub fn format_bytes(bytes: u64) -> String {
-    const KB: u64 = 1024;
-    const MB: u64 = KB * 1024;
-    const GB: u64 = MB * 1024;
-
-    if bytes < KB {
-        format!("{bytes} bytes")
-    } else if bytes < MB {
-        format!("{:.2} KB", bytes as f64 / KB as f64)
-    } else if bytes < GB {
-        format!("{:.2} MB", bytes as f64 / MB as f64)
-    } else {
-        format!("{:.2} GB", bytes as f64 / GB as f64)
-    }
 }
