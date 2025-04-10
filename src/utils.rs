@@ -71,7 +71,11 @@ impl SerializableRegex {
     ///
     /// # Returns
     ///
-    /// A Result containing the `SerializableRegex` if valid, or an error if the pattern is invalid
+    /// A Result containing the `SerializableRegex` if valid
+    ///
+    /// # Errors
+    ///
+    /// Returns a `UtilError::InvalidRegex` if the pattern is invalid
     pub fn new(pattern: &str) -> UtilResult<Self> {
         let regex = validate_regex(pattern)?;
         Ok(SerializableRegex {
@@ -85,7 +89,8 @@ impl SerializableRegex {
     /// # Returns
     ///
     /// The pattern string used to create this regex
-    #[must_use] pub fn pattern(&self) -> &str {
+    #[must_use]
+    pub fn pattern(&self) -> &str {
         &self.pattern
     }
 
@@ -94,7 +99,8 @@ impl SerializableRegex {
     /// # Returns
     ///
     /// A reference to the compiled Regex object
-    #[must_use] pub fn regex(&self) -> &Regex {
+    #[must_use]
+    pub fn regex(&self) -> &Regex {
         &self.regex
     }
 
@@ -120,7 +126,8 @@ impl SerializableRegex {
     /// # Returns
     ///
     /// An iterator over all matches in the text
-    #[must_use] pub fn find_iter<'r, 't>(&'r self, text: &'t str) -> fancy_regex::Matches<'r, 't> {
+    #[must_use]
+    pub fn find_iter<'r, 't>(&'r self, text: &'t str) -> fancy_regex::Matches<'r, 't> {
         self.regex.find_iter(text)
     }
 }
@@ -162,7 +169,8 @@ impl FromStr for SerializableRegex {
 /// # Returns
 ///
 /// `true` if the URL is valid, `false` otherwise
-#[must_use] pub fn is_valid_url(url: &str) -> bool {
+#[must_use]
+pub fn is_valid_url(url: &str) -> bool {
     match Url::parse(url) {
         Ok(parsed) => parsed.scheme() == "http" || parsed.scheme() == "https",
         Err(_) => false,
@@ -190,7 +198,8 @@ pub fn validate_regex(pattern: &str) -> UtilResult<Regex> {
 /// # Returns
 ///
 /// A random User-Agent string
-#[must_use] pub fn get_random_user_agent() -> &'static str {
+#[must_use]
+pub fn get_random_user_agent() -> &'static str {
     let mut rng = rand::rng();
     defaults::DEFAULT_USER_AGENTS
         .choose(&mut rng)
@@ -208,7 +217,8 @@ pub fn validate_regex(pattern: &str) -> UtilResult<Regex> {
 /// # Returns
 ///
 /// A string that can be safely used as part of a filename
-#[must_use] pub fn sanitize_url_for_filename(url: &str) -> String {
+#[must_use]
+pub fn sanitize_url_for_filename(url: &str) -> String {
     // Parse the URL to extract just the host and path
     let parsed = match Url::parse(url) {
         Ok(parsed) => parsed,
@@ -238,7 +248,8 @@ pub fn validate_regex(pattern: &str) -> UtilResult<Regex> {
 /// # Returns
 ///
 /// `true` if the string is a valid IP address, `false` otherwise
-#[must_use] pub fn is_valid_ip(ip_str: &str) -> bool {
+#[must_use]
+pub fn is_valid_ip(ip_str: &str) -> bool {
     ip_str.parse::<std::net::IpAddr>().is_ok()
 }
 
@@ -251,7 +262,8 @@ pub fn validate_regex(pattern: &str) -> UtilResult<Regex> {
 /// # Returns
 ///
 /// `true` if the port number is valid, `false` otherwise
-#[must_use] pub fn is_valid_port(port: u16) -> bool {
+#[must_use]
+pub fn is_valid_port(port: u16) -> bool {
     port > 0
 }
 
@@ -264,7 +276,8 @@ pub fn validate_regex(pattern: &str) -> UtilResult<Regex> {
 /// # Returns
 ///
 /// A human-readable string representing the size
-#[must_use] pub fn format_bytes(bytes: u64) -> String {
+#[must_use]
+pub fn format_bytes(bytes: u64) -> String {
     const KB: u64 = 1024;
     const MB: u64 = KB * 1024;
     const GB: u64 = MB * 1024;

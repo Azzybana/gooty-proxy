@@ -287,7 +287,7 @@ async fn main() {
                 };
 
                 // Initialize judge and sleuth
-                if let Err(e) = manager.init_judge().await {
+                if let Err(e) = manager.init_judge() {
                     eprintln!("Failed to initialize judge: {e}");
                     std::process::exit(1);
                 }
@@ -439,7 +439,7 @@ async fn main() {
 
             // Initialize judge if needed
             if judge || detail {
-                if let Err(e) = manager.init_judge().await {
+                if let Err(e) = manager.init_judge() {
                     eprintln!("Failed to initialize judge: {e}");
                     std::process::exit(1);
                 }

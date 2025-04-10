@@ -31,6 +31,7 @@
 //! ```
 
 use crate::definitions::{
+    self,
     enums::AnonymityLevel,
     errors::{JudgementError, JudgementResult},
     proxy::Proxy,
@@ -93,7 +94,7 @@ impl Judge {
     /// # Errors
     ///
     /// Returns an error if the Requestor cannot be created
-    pub async fn new() -> JudgementResult<Self> {
+    pub fn new() -> JudgementResult<Self> {
         let judge_urls = crate::defaults::PROXY_JUDGE_URLS
             .iter()
             .map(|url| (*url).to_string())
@@ -146,11 +147,11 @@ impl Judge {
             .await?;
 
         // Record the latency
-        let latency = start.elapsed().as_millis() as u32;
+        let latency = start.elapsed().as_millis();
         proxy.record_check(latency);
 
         // Analyze the response to determine anonymity level
-        let anonymity = self.determine_anonymity_level(&response, proxy)?;
+        let anonymity = Self::determine_anonymity_level(&response, proxy);
 
         Ok(anonymity)
     }
@@ -174,15 +175,10 @@ impl Judge {
     /// # Returns
     ///
     /// The determined anonymity level
-    ///
-    /// # Errors
-    ///
-    /// Returns an error if the response cannot be analyzed
     fn determine_anonymity_level(
-        &self,
         response: &str,
         proxy: &Proxy,
-    ) -> JudgementResult<AnonymityLevel> {
+    ) -> definitions::enums::AnonymityLevel {
         // Check if our proxy IP appears in the response
         let proxy_ip = proxy.address.to_string();
 
@@ -217,13 +213,13 @@ impl Judge {
         // Determine anonymity level
         if found_ip_in_headers {
             // IP is visible in headers - transparent proxy
-            Ok(AnonymityLevel::Transparent)
+            AnonymityLevel::Transparent
         } else if found_proxy_headers {
             // Proxy headers exist but don't reveal our IP - anonymous proxy
-            Ok(AnonymityLevel::Anonymous)
+            AnonymityLevel::Anonymous
         } else {
             // No proxy information revealed - elite proxy
-            Ok(AnonymityLevel::Elite)
+            AnonymityLevel::Elite
         }
     }
 
@@ -245,7 +241,8 @@ impl Judge {
     /// # Returns
     ///
     /// A slice containing all the judge URLs currently configured
-    #[must_use] pub fn get_judge_urls(&self) -> &[String] {
+    #[must_use]
+    pub fn get_judge_urls(&self) -> &[String] {
         &self.judge_urls
     }
 }

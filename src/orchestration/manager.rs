@@ -55,7 +55,7 @@ pub struct ProxyStats {
     pub by_country: HashMap<String, usize>,
 
     /// Average latency of working proxies
-    pub avg_latency: Option<u32>,
+    pub avg_latency: Option<u128>,
 }
 
 /// Statistics about sources managed by `ProxyManager`
@@ -162,8 +162,8 @@ impl ProxyManager {
     /// # Errors
     ///
     /// Returns an error if the judge service cannot be initialized.
-    pub async fn init_judge(&mut self) -> ManagerResult<()> {
-        let judge = Judge::new().await.map_err(ManagerError::JudgementError)?;
+    pub fn init_judge(&mut self) -> ManagerResult<()> {
+        let judge = Judge::new().map_err(ManagerError::JudgementError)?;
         self.judge = Some(Arc::new(judge));
         Ok(())
     }
@@ -771,7 +771,7 @@ impl ProxyManager {
     ) -> ManagerResult<()> {
         // Ensure judge is initialized
         if self.judge.is_none() {
-            self.init_judge().await?;
+            self.init_judge()?;
         }
 
         let judge = self.judge.clone().unwrap();

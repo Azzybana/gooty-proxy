@@ -104,7 +104,7 @@ pub struct Proxy {
     pub hostname: Option<String>,
 
     /// The latency of the proxy in milliseconds, if measured.
-    pub latency_ms: Option<u32>,
+    pub latency_ms: Option<u128>,
 
     /// When the proxy was added to the system.
     pub added_at: DateTime<Utc>,
@@ -312,7 +312,7 @@ impl Proxy {
     }
 
     /// Records a successful check of the proxy
-    pub fn record_check(&mut self, latency: u32) {
+    pub fn record_check(&mut self, latency: u128) {
         self.last_checked_at = Some(Utc::now());
         self.check_count += 1;
         self.latency_ms = Some(latency);
