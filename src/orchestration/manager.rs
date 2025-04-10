@@ -256,7 +256,8 @@ impl ProxyManager {
     /// # Returns
     ///
     /// An Option containing a reference to the proxy if found, or None if not found.
-    #[must_use] pub fn get_proxy(&self, id: &str) -> Option<&Proxy> {
+    #[must_use]
+    pub fn get_proxy(&self, id: &str) -> Option<&Proxy> {
         self.proxies.get(id)
     }
 
@@ -295,7 +296,8 @@ impl ProxyManager {
     /// # Returns
     ///
     /// The number of proxies in the manager.
-    #[must_use] pub fn proxy_count(&self) -> usize {
+    #[must_use]
+    pub fn proxy_count(&self) -> usize {
         self.proxies.len()
     }
 
@@ -304,7 +306,8 @@ impl ProxyManager {
     /// # Returns
     ///
     /// A vector containing references to all proxies.
-    #[must_use] pub fn get_all_proxies(&self) -> Vec<&Proxy> {
+    #[must_use]
+    pub fn get_all_proxies(&self) -> Vec<&Proxy> {
         self.proxies.values().collect()
     }
 
@@ -313,7 +316,8 @@ impl ProxyManager {
     /// # Returns
     ///
     /// A vector containing clones of all proxies.
-    #[must_use] pub fn get_all_proxies_owned(&self) -> Vec<Proxy> {
+    #[must_use]
+    pub fn get_all_proxies_owned(&self) -> Vec<Proxy> {
         self.proxies.values().cloned().collect()
     }
 
@@ -409,7 +413,8 @@ impl ProxyManager {
     /// # Returns
     ///
     /// An Option containing a reference to the source if found, or None if not found.
-    #[must_use] pub fn get_source(&self, url: &str) -> Option<&Source> {
+    #[must_use]
+    pub fn get_source(&self, url: &str) -> Option<&Source> {
         self.sources.get(url)
     }
 
@@ -448,7 +453,8 @@ impl ProxyManager {
     /// # Returns
     ///
     /// The number of sources in the manager.
-    #[must_use] pub fn source_count(&self) -> usize {
+    #[must_use]
+    pub fn source_count(&self) -> usize {
         self.sources.len()
     }
 
@@ -457,7 +463,8 @@ impl ProxyManager {
     /// # Returns
     ///
     /// A vector containing references to all sources.
-    #[must_use] pub fn get_all_sources(&self) -> Vec<&Source> {
+    #[must_use]
+    pub fn get_all_sources(&self) -> Vec<&Source> {
         self.sources.values().collect()
     }
 
@@ -466,7 +473,8 @@ impl ProxyManager {
     /// # Returns
     ///
     /// A vector containing clones of all sources.
-    #[must_use] pub fn get_all_sources_owned(&self) -> Vec<Source> {
+    #[must_use]
+    pub fn get_all_sources_owned(&self) -> Vec<Source> {
         self.sources.values().cloned().collect()
     }
 
@@ -478,7 +486,8 @@ impl ProxyManager {
     /// # Returns
     ///
     /// A `ProxyStats` struct containing the calculated statistics.
-    #[must_use] pub fn get_proxy_stats(&self) -> ProxyStats {
+    #[must_use]
+    pub fn get_proxy_stats(&self) -> ProxyStats {
         let total = self.proxies.len();
         let mut working = 0;
         let mut by_anonymity = HashMap::new();
@@ -536,7 +545,8 @@ impl ProxyManager {
     /// # Returns
     ///
     /// A `SourceStats` struct containing the calculated statistics.
-    #[must_use] pub fn get_source_stats(&self) -> SourceStats {
+    #[must_use]
+    pub fn get_source_stats(&self) -> SourceStats {
         let total = self.sources.len();
         let mut active = 0;
         let mut total_proxies_found: usize = 0;
@@ -654,9 +664,7 @@ impl ProxyManager {
 
         // Add proxies to the manager
         let added_count = self.add_proxies(proxies.clone())?;
-        info!(
-            "Added {added_count} new proxies from source {source_url}"
-        );
+        info!("Added {added_count} new proxies from source {source_url}");
 
         self.last_update_time = Some(Utc::now());
         Ok(proxies)
@@ -696,9 +704,7 @@ impl ProxyManager {
                 debug!("Enriched proxy {proxy_id} with IP metadata");
             }
             Err(e) => {
-                warn!(
-                    "Failed to enrich proxy {proxy_id} with IP metadata: {e}"
-                );
+                warn!("Failed to enrich proxy {proxy_id} with IP metadata: {e}");
                 return Err(ManagerError::SleuthError(e));
             }
         }
@@ -711,7 +717,8 @@ impl ProxyManager {
     /// # Returns
     ///
     /// An Option containing the `DateTime` of the last update, or None if never updated.
-    #[must_use] pub fn get_last_update_time(&self) -> Option<DateTime<Utc>> {
+    #[must_use]
+    pub fn get_last_update_time(&self) -> Option<DateTime<Utc>> {
         self.last_update_time
     }
 
@@ -885,11 +892,12 @@ impl ProxyManager {
     /// // Get the 5 best proxies for an important task
     /// let best_proxies = manager.get_best_proxies(5);
     /// ```
-    #[must_use] pub fn get_best_proxies(&self, count: usize) -> Vec<&Proxy> {
+    #[must_use]
+    pub fn get_best_proxies(&self, count: usize) -> Vec<&Proxy> {
         let mut proxies: Vec<&Proxy> = self
             .proxies
             .values()
-            .filter(|p| p.check_count > 0 && p.check_success_rate() > 0.5)
+            .filter(|p| p.check_count > 0 && p.check_success_rate() > 50)
             .collect();
 
         // Sort by success rate and latency
@@ -898,7 +906,7 @@ impl ProxyManager {
             let b_success = b.check_success_rate();
 
             // Compare success rates first (higher is better)
-            if (a_success - b_success).abs() > 0.01 {
+            if a_success - b_success > 0 {
                 return b_success
                     .partial_cmp(&a_success)
                     .unwrap_or(std::cmp::Ordering::Equal);

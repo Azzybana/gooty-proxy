@@ -338,24 +338,24 @@ impl Proxy {
 
     /// Calculates the success rate of the proxy based on check history
     #[must_use]
-    pub fn check_success_rate(&self) -> f64 {
+    pub fn check_success_rate(&self) -> usize {
         if self.check_count == 0 {
-            return 0.0;
+            return 0;
         }
 
         let success_count = self.check_count - self.check_failure_count;
-        (success_count as f64) / (self.check_count as f64)
+        100 * success_count / self.check_count
     }
 
     /// Calculates the success rate of the proxy based on usage history
     #[must_use]
-    pub fn use_success_rate(&self) -> f64 {
+    pub fn use_success_rate(&self) -> usize {
         if self.use_count == 0 {
-            return 0.0;
+            return 0;
         }
 
         let success_count = self.use_count - self.use_failure_count;
-        (success_count as f64) / (self.use_count as f64)
+        100 * success_count / self.use_count
     }
 
     /// Returns a connection string representation of the proxy

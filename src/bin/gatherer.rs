@@ -168,6 +168,26 @@ enum Commands {
     },
 }
 
+fn print_proxy_details(proxy: &Proxy) {
+    println!("Proxy Type: {}", proxy.proxy_type);
+    println!("Anonymity Level: {}", proxy.anonymity);
+    if let Some(latency) = proxy.latency_ms {
+        println!("Latency: {latency}ms");
+    }
+    if let Some(country) = &proxy.country {
+        println!("Country: {country}");
+    }
+    if let Some(org) = &proxy.organization {
+        println!("Organization: {org}");
+    }
+    if let Some(asn) = &proxy.asn {
+        println!("ASN: {asn}");
+    }
+    if let Some(hostname) = &proxy.hostname {
+        println!("Hostname: {hostname}");
+    }
+}
+
 #[tokio::main]
 async fn main() {
     let cli = Cli::parse();
@@ -338,14 +358,17 @@ async fn main() {
                     }
 
                     println!("\nTest Statistics:");
-                    println!("Success Rate: {:.1}%", proxy.check_success_rate() * 100.0);
+                    println!(
+                        "Success Rate: {:.2}%",
+                        (proxy.check_success_rate() as f64 / 100.0)
+                    );
                     println!(
                         "Checks: {} total, {} failed",
                         proxy.check_count, proxy.check_failure_count
                     );
 
                     // Save to proxy list if test was successful and not in dry run mode
-                    if !dry && proxy.check_success_rate() > 0.0 {
+                    if !dry && proxy.check_success_rate() > 0 {
                         if let Some(filestore) = get_filestore("data") {
                             match filestore.load_proxies("proxies") {
                                 Ok(mut proxies) => {
@@ -511,7 +534,7 @@ async fn main() {
                 // Count working proxies
                 let working = proxies
                     .iter()
-                    .filter(|p| p.check_success_rate() > 0.0)
+                    .filter(|p| p.check_success_rate() > 0)
                     .count();
                 println!("\nWorking proxies: {}/{}", working, proxies.len());
 
