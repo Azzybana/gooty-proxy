@@ -1,3 +1,44 @@
+//! # Proxy Module
+//!
+//! This module provides definitions and operations for proxy servers, including their
+//! configuration, validation, and metadata management.
+//!
+//! ## Overview
+//!
+//! The module centers around the `Proxy` struct, which represents a proxy server with
+//! its connection details (address, port, protocol) and extended metadata (anonymity level,
+//! location, organization info). It includes functionality for:
+//!
+//! - Creating and configuring proxy instances
+//! - Validating proxy configurations
+//! - Tracking proxy performance metrics
+//! - Managing proxy metadata
+//! - Serializing and deserializing proxy data
+//!
+//! ## Examples
+//!
+//! ```
+//! use gooty_proxy::definitions::proxy::Proxy;
+//! use gooty_proxy::definitions::enums::{ProxyType, AnonymityLevel};
+//! use std::net::{IpAddr, Ipv4Addr};
+//!
+//! // Create a new HTTP proxy
+//! let proxy = Proxy::new(
+//!     ProxyType::Http,
+//!     IpAddr::V4(Ipv4Addr::new(192, 168, 1, 1)),
+//!     8080,
+//!     AnonymityLevel::Elite,
+//! );
+//!
+//! // Add authentication credentials
+//! let authenticated_proxy = proxy.clone()
+//!     .with_auth("username".to_string(), "password".to_string());
+//!
+//! // Get connection string
+//! let connection_string = authenticated_proxy.to_connection_string();
+//! assert_eq!(connection_string, "http://username:password@192.168.1.1:8080");
+//! ```
+
 use crate::definitions::{
     enums::{AnonymityLevel, ProxyType},
     errors::ProxyError,
@@ -132,7 +173,8 @@ impl Proxy {
     ///     AnonymityLevel::Anonymous,
     /// );
     /// ```
-    #[must_use] pub fn new(
+    #[must_use]
+    pub fn new(
         proxy_type: ProxyType,
         address: IpAddr,
         port: u16,
@@ -188,7 +230,8 @@ impl Proxy {
     ///     AnonymityLevel::Anonymous
     /// ).with_auth("username".to_string(), "password".to_string());
     /// ```
-    #[must_use] pub fn with_auth(mut self, username: String, password: String) -> Self {
+    #[must_use]
+    pub fn with_auth(mut self, username: String, password: String) -> Self {
         self.username = Some(username);
         self.password = Some(password);
         self
@@ -203,7 +246,8 @@ impl Proxy {
     /// # Returns
     ///
     /// Self with country information set
-    #[must_use] pub fn with_country(mut self, country: String) -> Self {
+    #[must_use]
+    pub fn with_country(mut self, country: String) -> Self {
         self.country = Some(country);
         self
     }
@@ -217,7 +261,8 @@ impl Proxy {
     /// # Returns
     ///
     /// Self with hostname information set
-    #[must_use] pub fn with_hostname(mut self, hostname: String) -> Self {
+    #[must_use]
+    pub fn with_hostname(mut self, hostname: String) -> Self {
         self.hostname = Some(hostname);
         self
     }
@@ -231,7 +276,8 @@ impl Proxy {
     /// # Returns
     ///
     /// Self with organization information set
-    #[must_use] pub fn with_organization(mut self, organization: String) -> Self {
+    #[must_use]
+    pub fn with_organization(mut self, organization: String) -> Self {
         self.organization = Some(organization);
         self
     }
@@ -291,7 +337,8 @@ impl Proxy {
     }
 
     /// Calculates the success rate of the proxy based on check history
-    #[must_use] pub fn check_success_rate(&self) -> f64 {
+    #[must_use]
+    pub fn check_success_rate(&self) -> f64 {
         if self.check_count == 0 {
             return 0.0;
         }
@@ -301,7 +348,8 @@ impl Proxy {
     }
 
     /// Calculates the success rate of the proxy based on usage history
-    #[must_use] pub fn use_success_rate(&self) -> f64 {
+    #[must_use]
+    pub fn use_success_rate(&self) -> f64 {
         if self.use_count == 0 {
             return 0.0;
         }
@@ -311,7 +359,8 @@ impl Proxy {
     }
 
     /// Returns a connection string representation of the proxy
-    #[must_use] pub fn to_connection_string(&self) -> String {
+    #[must_use]
+    pub fn to_connection_string(&self) -> String {
         let auth_part = match (&self.username, &self.password) {
             (Some(u), Some(p)) => format!("{u}:{p}@"),
             _ => String::new(),
@@ -385,7 +434,8 @@ impl Proxy {
     }
 
     /// Gets the full IP metadata if available
-    #[must_use] pub fn get_ip_metadata(&self) -> Option<&IpMetadata> {
+    #[must_use]
+    pub fn get_ip_metadata(&self) -> Option<&IpMetadata> {
         self.ip_metadata.as_ref()
     }
 }

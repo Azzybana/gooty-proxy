@@ -1,3 +1,36 @@
+//! # CIDR Module
+//!
+//! This module provides functionality for working with CIDR (Classless Inter-Domain Routing)
+//! notation, which is a method for allocating IP addresses and for IP routing.
+//!
+//! ## Overview
+//!
+//! The module is centered around the `Cidr` struct, which represents a CIDR block
+//! and provides methods to:
+//!
+//! - Parse CIDR notation strings (e.g., "192.168.1.0/24")
+//! - Check if an IP address is within a CIDR block
+//! - Calculate the number of addresses in a CIDR block
+//! - Determine network address, broadcast address, and valid IP ranges
+//! - Convert between different representations of network blocks
+//!
+//! ## Examples
+//!
+//! ```
+//! use gooty_proxy::inspection::Cidr;
+//! use std::net::IpAddr;
+//!
+//! // Parse a CIDR block
+//! let cidr = Cidr::from_str("192.168.1.0/24").unwrap();
+//!
+//! // Check if an IP address is in the CIDR block
+//! let ip: IpAddr = "192.168.1.50".parse().unwrap();
+//! assert!(cidr.contains(&ip));
+//!
+//! // Get the network address and prefix length
+//! println!("Network: {}, Prefix: {}", cidr.network(), cidr.prefix_len());
+//! ```
+
 use crate::definitions::errors::{CidrError, CidrResult};
 use std::net::IpAddr;
 
@@ -120,7 +153,8 @@ impl Cidr {
     /// assert!(cidr.contains(&ip_in));
     /// assert!(!cidr.contains(&ip_out));
     /// ```
-    #[must_use] pub fn contains(&self, ip: &IpAddr) -> bool {
+    #[must_use]
+    pub fn contains(&self, ip: &IpAddr) -> bool {
         // Ensure IP versions match
         match (ip, &self.network_address) {
             (IpAddr::V4(_), IpAddr::V4(_)) | (IpAddr::V6(_), IpAddr::V6(_)) => {}
@@ -175,7 +209,8 @@ impl Cidr {
     /// # Returns
     ///
     /// A reference to the network IP address.
-    #[must_use] pub fn get_network_address(&self) -> &IpAddr {
+    #[must_use]
+    pub fn get_network_address(&self) -> &IpAddr {
         &self.network_address
     }
 
@@ -184,7 +219,8 @@ impl Cidr {
     /// # Returns
     ///
     /// The prefix length as a u8 value (e.g., 24 for a /24 network).
-    #[must_use] pub fn get_prefix_length(&self) -> u8 {
+    #[must_use]
+    pub fn get_prefix_length(&self) -> u8 {
         self.prefix_length
     }
 
@@ -193,7 +229,8 @@ impl Cidr {
     /// # Returns
     ///
     /// The CIDR in string format like "192.168.1.0/24".
-    #[must_use] pub fn to_string(&self) -> &str {
+    #[must_use]
+    pub fn to_string(&self) -> &str {
         &self.cidr_string
     }
 }
@@ -223,7 +260,8 @@ pub mod helpers {
     /// let ip = helpers::extract_network_from_cidr("192.168.1.0/24").unwrap();
     /// assert_eq!(ip, "192.168.1.0");
     /// ```
-    #[must_use] pub fn extract_network_from_cidr(cidr: &str) -> Option<String> {
+    #[must_use]
+    pub fn extract_network_from_cidr(cidr: &str) -> Option<String> {
         let parts: Vec<&str> = cidr.split('/').collect();
         if parts.len() == 2 {
             Some(parts[0].to_string())
@@ -250,7 +288,8 @@ pub mod helpers {
     /// let prefix = helpers::extract_prefix_from_cidr("192.168.1.0/24").unwrap();
     /// assert_eq!(prefix, 24);
     /// ```
-    #[must_use] pub fn extract_prefix_from_cidr(cidr: &str) -> Option<u8> {
+    #[must_use]
+    pub fn extract_prefix_from_cidr(cidr: &str) -> Option<u8> {
         let parts: Vec<&str> = cidr.split('/').collect();
         if parts.len() == 2 {
             parts[1].parse().ok()
@@ -279,7 +318,8 @@ pub mod helpers {
     /// let ip = IpAddr::V4(Ipv4Addr::new(192, 168, 1, 10));
     /// assert!(helpers::is_ip_in_cidr(&ip, "192.168.1.0/24"));
     /// ```
-    #[must_use] pub fn is_ip_in_cidr(ip: &IpAddr, cidr: &str) -> bool {
+    #[must_use]
+    pub fn is_ip_in_cidr(ip: &IpAddr, cidr: &str) -> bool {
         match Cidr::to_cidr(cidr) {
             Ok(cidr_block) => cidr_block.contains(ip),
             Err(_) => false,

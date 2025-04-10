@@ -581,14 +581,12 @@ fn parse_proxy_url(url: &str) -> Result<Proxy, String> {
         return Err("Invalid address format. Expected: ip:port".to_string());
     }
 
-    let ip = match IpAddr::from_str(addr_parts[0]) {
-        Ok(ip) => ip,
-        Err(_) => return Err("Invalid IP address".to_string()),
+    let Ok(ip) = IpAddr::from_str(addr_parts[0]) else {
+        return Err("Invalid IP address".to_string());
     };
 
-    let port = match addr_parts[1].parse::<u16>() {
-        Ok(p) => p,
-        Err(_) => return Err("Invalid port number".to_string()),
+    let Ok(port) = addr_parts[1].parse::<u16>() else {
+        return Err("Invalid port number".to_string());
     };
 
     Ok(Proxy::new(protocol, ip, port, AnonymityLevel::Anonymous))

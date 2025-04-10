@@ -1,3 +1,45 @@
+//! # Ownership Module
+//!
+//! This module provides functionality for determining ownership information
+//! for IP addresses and proxy servers, including organization details and
+//! Autonomous System Numbers (ASNs).
+//!
+//! ## Overview
+//!
+//! The module contains types and functions for:
+//!
+//! - Looking up IP address ownership through various data sources
+//! - Retrieving Autonomous System Numbers (ASNs) and network information
+//! - Obtaining organization details associated with IP addresses
+//! - Accessing network-level metadata about IP ranges
+//!
+//! This information helps classify proxies by their operators, detect
+//! datacenter vs residential proxies, and identify potentially malicious
+//! sources.
+//!
+//! ## Examples
+//!
+//! ```
+//! use gooty_proxy::inspection::{OwnershipLookup, Organization};
+//! use std::net::IpAddr;
+//!
+//! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+//! // Create a new ownership lookup service
+//! let lookup = OwnershipLookup::new();
+//!
+//! // Look up an IP address
+//! let ip: IpAddr = "8.8.8.8".parse()?;
+//! let network_info = lookup.lookup(ip).await?;
+//!
+//! // Access organization information
+//! if let Some(org) = &network_info.organization {
+//!     println!("Organization: {}", org.name.as_deref().unwrap_or("Unknown"));
+//!     println!("ASN: {}", org.asn.as_deref().unwrap_or("Unknown"));
+//! }
+//! # Ok(())
+//! # }
+//! ```
+
 use crate::definitions::errors::{OwnershipError, OwnershipResult};
 use crate::inspection::Location;
 use reqwest::Client;
@@ -79,7 +121,8 @@ impl Organization {
     /// # Returns
     ///
     /// A new Organization instance with the specified name and ASN
-    #[must_use] pub fn new(name: Option<String>, asn: Option<String>) -> Self {
+    #[must_use]
+    pub fn new(name: Option<String>, asn: Option<String>) -> Self {
         Organization {
             name,
             asn,
@@ -96,7 +139,8 @@ impl Organization {
     /// # Returns
     ///
     /// Self with the parent organization set
-    #[must_use] pub fn with_parent(mut self, parent: Organization) -> Self {
+    #[must_use]
+    pub fn with_parent(mut self, parent: Organization) -> Self {
         self.parent = Some(Box::new(parent));
         self
     }
@@ -106,7 +150,8 @@ impl Organization {
     /// # Returns
     ///
     /// `true` if this organization has a parent, `false` otherwise
-    #[must_use] pub fn has_parent(&self) -> bool {
+    #[must_use]
+    pub fn has_parent(&self) -> bool {
         self.parent.is_some()
     }
 
@@ -116,7 +161,8 @@ impl Organization {
     ///
     /// The ASN as a u32 if it exists and can be parsed as a number,
     /// or None if the ASN is not set or cannot be parsed
-    #[must_use] pub fn get_asn_number(&self) -> Option<u32> {
+    #[must_use]
+    pub fn get_asn_number(&self) -> Option<u32> {
         self.asn.as_ref().and_then(|asn| asn.parse::<u32>().ok())
     }
 }
@@ -208,7 +254,8 @@ impl OwnershipLookup {
     /// # Returns
     ///
     /// A new `OwnershipLookup` instance
-    #[must_use] pub fn new() -> Self {
+    #[must_use]
+    pub fn new() -> Self {
         let client = Client::builder()
             .timeout(Duration::from_secs(10))
             .build()
@@ -226,7 +273,8 @@ impl OwnershipLookup {
     /// # Returns
     ///
     /// A new `OwnershipLookup` instance with the specified client
-    #[must_use] pub fn with_client(client: Client) -> Self {
+    #[must_use]
+    pub fn with_client(client: Client) -> Self {
         OwnershipLookup { client }
     }
 
@@ -415,9 +463,8 @@ impl OwnershipLookup {
         let asn_number = asn.trim_start_matches("AS");
 
         // Ensure it's a valid number
-        let asn_num = match asn_number.parse::<u32>() {
-            Ok(n) => n,
-            Err(_) => return Err(OwnershipError::ParseError(format!("Invalid ASN: {asn}"))),
+        let Ok(asn_num) = asn_number.parse::<u32>() else {
+            return Err(OwnershipError::ParseError(format!("Invalid ASN: {asn}")));
         };
 
         // Use ipinfo.io's free API to get ASN information

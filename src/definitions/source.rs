@@ -1,3 +1,45 @@
+//! # Source Module
+//!
+//! This module defines types and functionality for managing proxy sources - locations
+//! from which proxy servers can be discovered and retrieved.
+//!
+//! ## Overview
+//!
+//! The module is centered around the `Source` struct, which represents an external
+//! source of proxy servers. It provides functionality for:
+//!
+//! - Defining sources with URLs and regex patterns for proxy extraction
+//! - Fetching and parsing proxy lists from various sources
+//! - Tracking source reliability and performance metrics
+//! - Managing source parameters for customized requests
+//!
+//! Sources typically represent web pages or APIs that provide lists of proxy servers,
+//! which can then be validated and used throughout the application.
+//!
+//! ## Examples
+//!
+//! ```
+//! use gooty_proxy::definitions::source::Source;
+//! use gooty_proxy::io::http::Requestor;
+//!
+//! #[tokio::main]
+//! async fn main() -> Result<(), Box<dyn std::error::Error>> {
+//!     // Create a source that extracts proxies in IP:PORT format
+//!     let source = Source::new(
+//!         "https://example.com/proxy-list".to_string(),
+//!         "Mozilla/5.0 (compatible; Gooty/1.0)".to_string(),
+//!         r"(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{2,5})".to_string(),
+//!     )?;
+//!
+//!     // Create an HTTP client and fetch proxies
+//!     let requestor = Requestor::new()?;
+//!     let proxies = source.fetch_proxies(&requestor).await?;
+//!
+//!     println!("Found {} proxies", proxies.len());
+//!     Ok(())
+//! }
+//! ```
+
 use crate::definitions::{
     enums::{AnonymityLevel, ProxyType},
     errors::{SourceError, SourceResult},
@@ -124,7 +166,8 @@ impl Source {
     }
 
     /// Returns the success rate of using this source
-    #[must_use] pub fn success_rate(&self) -> f64 {
+    #[must_use]
+    pub fn success_rate(&self) -> f64 {
         if self.use_count == 0 {
             return 0.0;
         }
@@ -160,7 +203,8 @@ impl Source {
     }
 
     /// Returns a constructed URL with parameters
-    #[must_use] pub fn get_full_url(&self) -> String {
+    #[must_use]
+    pub fn get_full_url(&self) -> String {
         if self.parameters.is_empty() {
             return self.url.clone();
         }
