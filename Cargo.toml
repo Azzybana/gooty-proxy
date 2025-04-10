@@ -6,7 +6,6 @@
     license     = "Apache-2.0"
     keywords    = ["web", "http", "framework", "proxy", "library"]
     categories  = ["web-programming::http-client", "network-programming", "security"]
-    publish     = false
 
     # Author
     authors = ["Azzybana Raccoon <121582001+Azzybana@users.noreply.github.com>"]
