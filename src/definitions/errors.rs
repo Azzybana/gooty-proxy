@@ -1,7 +1,3 @@
-use reqwest::StatusCode;
-use std::path::PathBuf;
-use thiserror::Error;
-
 //! # Error Types
 //!
 //! This module provides a comprehensive set of error types used throughout the gooty-proxy crate.
@@ -38,6 +34,10 @@ use thiserror::Error;
 //!     Ok(())
 //! }
 //! ```
+
+use reqwest::StatusCode;
+use std::path::PathBuf;
+use thiserror::Error;
 
 /// Represents error types that can occur during CIDR operations.
 ///
