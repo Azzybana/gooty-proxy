@@ -13,14 +13,14 @@
 
     # Repository/Links
     readme        = "README.md"
-    homepage      = ""
-    documentation = ""
-    repository    = ""
+    homepage      = "https://github.com/Azzybana/gooty-proxy"
+    documentation = "https://github.com/Azzybana/gooty-proxy/wiki"
+    repository    = "https://github.com/Azzybana/gooty-proxy"
 
     # Rust
-    rust-version = "1.85.0"
+    rust-version = "1.86.0"
     edition      = "2024"
-    resolver     = "3"      # Requires Rust 1.84+
+    resolver     = "3"
 
 [[bin]]
     name = "gatherer"
