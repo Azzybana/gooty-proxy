@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["AnonymityLevel","LogLevel","ProxyType","RotationStrategy","SourceStatus","ValidationState","VerificationMethod"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["CidrError","ConfigError","FilestoreError","JudgementError","ManagerError","OwnershipError","ProxyError","RequestorError","SleuthError","SourceError","UtilError"],"type":["CidrResult","ConfigResult","FilestoreResult","JudgementResult","ManagerResult","OwnershipResult","RequestResult","SleuthResult","SourceResult","UtilResult"]};

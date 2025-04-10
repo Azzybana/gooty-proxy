@@ -1,0 +1,233 @@
+#==============================================================================
+# Width and Line Settings
+#==============================================================================
+# Maximum width of array literals before vertical formatting
+array_width = 60 # X <= max_width
+
+# Maximum width of attribute arguments before vertical formatting
+attr_fn_like_width = 60 # X <= max_width
+
+# Maximum width for comments before wrapping
+comment_width = 80 # Unstable! X > 0
+
+# Maximum width for doc comment code blocks
+doc_comment_code_block_width = 100 # Unstable! X <= max_width
+
+# Maximum width of function calls before wrapping
+fn_call_width = 60 # X <= max_width
+
+# Maximum width for struct literal body
+struct_lit_width = 18 # X <= max_width
+
+# Maximum width for struct variant body
+struct_variant_width = 35 # X <= max_width
+
+# Maximum width for single-line if-else
+single_line_if_else_max_width = 50 # X <= max_width
+
+# Maximum width for single-line let-else
+single_line_let_else_max_width = 50 # X <= max_width
+
+#==============================================================================
+# Layout and Formatting
+#==============================================================================
+# Controls binary operator position in multiline expressions
+binop_separator = "Front" # Unstable! X ∈ {"Front", "Back"}
+
+# Minimum blank lines between items
+blank_lines_lower_bound = 1 # Unstable! X ∈ ℕ₀
+
+# Maximum consecutive blank lines
+blank_lines_upper_bound = 2 # Unstable! X ∈ ℕ₀
+
+# Controls item brace placement style
+brace_style = "SameLineWhere" # Unstable! X ∈ {"AlwaysNextLine", "PreferSameLine", "SameLineWhere"}
+
+# Maximum width of method chains before wrapping
+chain_width = 50 # X <= max_width
+
+#==============================================================================
+# Import and Module Organization
+#==============================================================================
+# Import block indentation style
+imports_indent = "Block" # Unstable! X ∈ {"Block", "Visual"}
+
+# Import block item layout
+imports_layout = "Vertical" # Unstable! X ∈ {"Horizontal", "HorizontalVertical", "Mixed", "Vertical"}
+
+# Import statement granularity
+imports_granularity = "Preserve" # Unstable! X ∈ {"Preserve", "Crate", "Module", "Item", "One"}
+
+# Import grouping strategy
+group_imports = "StdExternalCrate" # Unstable! X ∈ {"Preserve", "StdExternalCrate", "One"}
+
+# Reorder imports alphabetically
+reorder_imports = true # X ∈ {true, false}
+
+# Reorder mod declarations
+reorder_modules = true # X ∈ {true, false}
+
+#==============================================================================
+# Function and Control Flow
+#==============================================================================
+# Controls function argument layout style
+fn_args_layout = "Vertical" # X ∈ {"Compressed", "Tall", "Vertical"}
+
+# Controls function parameter layout style
+fn_params_layout = "Vertical" # X ∈ {"Compressed", "Tall", "Vertical"}
+
+# Places single-expression functions on one line
+fn_single_line = true # Unstable! X ∈ {true, false}
+
+# Controls control flow construct brace style
+control_brace_style = "AlwaysSameLine" # Unstable! X ∈ {"AlwaysNextLine", "AlwaysSameLine", "ClosingNextLine"}
+
+#==============================================================================
+# Indentation and Spacing
+#==============================================================================
+# General indentation style
+indent_style = "Block" # Unstable! X ∈ {"Block", "Visual"}
+
+# Use tabs for indentation
+hard_tabs = false # X ∈ {true, false}
+
+# Number of spaces per tab
+tab_spaces = 4 # X > 0
+
+# Space after colon
+space_after_colon = true # Unstable! X ∈ {true, false}
+
+# Space before colon
+space_before_colon = false # Unstable! X ∈ {true, false}
+
+# Spaces around range operators
+spaces_around_ranges = false # Unstable! X ∈ {true, false}
+
+#==============================================================================
+# Comments and Documentation
+#==============================================================================
+# Format code snippets in doc comments
+format_code_in_doc_comments = false # Unstable! X ∈ {true, false}
+
+# Convert block comments to line comments
+normalize_comments = false # Unstable! X ∈ {true, false}
+
+# Convert doc attributes to doc comments
+normalize_doc_attributes = false # Unstable! X ∈ {true, false}
+
+# Break comments to fit on line
+wrap_comments = false # Unstable! X ∈ {true, false}
+
+#==============================================================================
+# Macro and Generated Code
+#==============================================================================
+# Format macro metavariable matching patterns
+format_macro_matchers = false # Unstable! X ∈ {true, false}
+
+# Format macro bodies
+format_macro_bodies = true # Unstable! X ∈ {true, false}
+
+# Skip formatting specific macro invocations
+skip_macro_invocations = [] # Unstable! X ∈ {[], ["name"], ["*"]}
+
+# Format files with @generated markers
+format_generated_files = true # Unstable! X ∈ {true, false}
+
+#==============================================================================
+# Miscellaneous
+#==============================================================================
+# Controls colored output behavior
+color = "Auto" # Unstable! X ∈ {"Auto", "Always", "Never"}
+
+# Prevents all formatting when true
+disable_all_formatting = false # X ∈ {true, false}
+
+# Sets the Rust edition for parsing
+edition = "2024" # X ∈ {"2015", "2018", "2021"}
+
+# Hide parse errors
+hide_parse_errors = false # Unstable! X ∈ {true, false}
+
+# Merges control flow with function calls
+combine_control_expr = true # Unstable! X ∈ {true, false}
+
+# Replaces multiple wildcards with range syntax
+condense_wildcard_suffixes = false # Unstable! X ∈ {true, false}
+
+# Error on exceeding max_width (except comments/strings)
+error_on_line_overflow = false # Unstable! X ∈ {true, false}
+
+# Error on unformattable comments/strings
+error_on_unformatted = false # X ∈ {true, false}
+
+# Print explicit ABI for extern items
+force_explicit_abi = true # X ∈ {true, false}
+
+# Force multiline closure and match arm bodies into blocks
+force_multiline_blocks = false # Unstable! X ∈ {true, false}
+
+# Format string literals
+format_strings = false # Unstable! X ∈ {true, false}
+
+# Control case of hex literal values
+hex_literal_case = "Preserve" # Unstable! X ∈ {"Preserve", "Upper", "Lower"}
+
+# Skip formatting specific files/directories
+# ignore = format every file # X ∈ [glob patterns]
+
+# Leading pipe in match arms
+match_arm_leading_pipes = "Never" # X ∈ {"Always", "Never", "Preserve"}
+
+# Trailing comma in block-based match arms
+match_block_trailing_comma = false # X ∈ {true, false}
+
+# Merge multiple derive attributes
+merge_derives = true # X ∈ {true, false}
+
+# Merge import statements
+merge_imports = false # X ∈ {true, false}
+
+# Allow overflow for delimited expressions
+overflow_delimited_expr = false # Unstable! X ∈ {true, false}
+
+# Remove redundant nested parentheses
+remove_nested_parens = true # X ∈ {true, false}
+
+# Reorder impl items by type
+reorder_impl_items = true # Unstable! X ∈ {true, false}
+
+# Width threshold for short array elements
+short_array_element_width_threshold = 10 # X <= max_width
+
+# Skip formatting out-of-line modules
+skip_children = false # Unstable! X ∈ {true, false}
+
+# Struct field alignment threshold
+struct_field_align_threshold = 0 # Unstable! X ∈ ℕ₀
+
+# Put small struct literals on single line
+struct_lit_single_line = true # Unstable! X ∈ {true, false}
+
+# Trailing comma style
+trailing_comma = "Vertical" # Unstable! X ∈ {"Always", "Never", "Vertical"}
+
+# Add trailing semicolons to flow control
+trailing_semicolon = true # Unstable! X ∈ {true, false}
+
+# Type operator density
+type_punctuation_density = "Wide" # Unstable! X ∈ {"Compressed", "Wide"}
+
+# Enable unstable features
+unstable_features = true # Unstable! X ∈ {true, false}
+
+# Use field initialization shorthand
+use_field_init_shorthand = false # X ∈ {true, false}
+
+# Control width configuration strategy
+use_small_heuristics = "Max" # X ∈ {"Default", "Off", "Max"}
+
+# Replace try! macro with ? operator
+use_try_shorthand = true # X ∈ {true, false}
+
+# Format where clauses on single line
+where_single_line = true # Unstable! X ∈ {true, false}

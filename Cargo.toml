@@ -1,0 +1,75 @@
+[package]
+    # Package
+    name        = "gooty-proxy"
+    description = "Gathers and judges proxies."
+    version     = "0.2.0"
+    license     = "Apache-2.0"
+    keywords    = ["web", "http", "framework", "proxy", "library"]
+    categories  = ["web-programming::http-client", "network-programming", "security"]
+    publish     = false
+
+    # Author
+    authors = ["Azzybana Raccoon <121582001+Azzybana@users.noreply.github.com>"]
+
+    # Repository/Links
+    readme        = "README.md"
+    homepage      = ""
+    documentation = ""
+    repository    = ""
+
+    # Rust
+    rust-version = "1.85.0"
+    edition      = "2024"
+    resolver     = "3"      # Requires Rust 1.84+
+
+[[bin]]
+    name = "gatherer"
+    path = "src/bin/gatherer.rs"
+
+[lib]
+    name = "gooty_proxy"
+    path = "src/lib.rs"
+
+[features]
+    default = []
+
+[dependencies]
+
+    thiserror         = { version = "2.0.12" }
+    log               = { version = "0.4.27", features = ["kv_serde", "std"] }
+    pretty_env_logger = { version = "0.5.0" }
+    serde             = { version = "1.0.219", features = ["derive"] }
+    fancy-regex       = { version = "0.14.0" }
+    chrono            = { version = "0.4.40", features = ["serde"] }
+    reqwest           = { version = "0.12.15", features = ["socks", "json"] }
+    serde_json        = { version = "1.0.140" }
+    ahash             = { version = "0.8.11", features = ["serde"] }
+    zerocopy          = { version = "0.8.24", features = ["std", "derive", "simd"] }
+    toml              = { version = "0.8.20" }
+    url               = { version = "2.5.4", features = ["serde"] }
+    rand              = { version = "0.9.0", features = ["serde", "log"] }
+    lazy_static       = { version = "1.5.0" }
+    tokio             = { version = "1.44.2", features = ["sync", "macros", "rt-multi-thread"] }
+    mimalloc          = { version = "0.1.46" }
+    clap              = { version = "4.5.35", features = ["derive", "string", "env"] }
+    indicatif         = { version = "0.17.7" }
+    futures           = { version = "0.3.31" }
+
+[profile.dev]
+    opt-level        = 1
+    overflow-checks  = true
+    debug            = true
+    lto              = "thin"
+    debug-assertions = true
+    panic            = "unwind"
+    incremental      = true
+
+[profile.release]
+    opt-level        = 3
+    overflow-checks  = false
+    debug            = false
+    lto              = "fat"
+    debug-assertions = false
+    panic            = "abort"
+    codegen-units    = 1
+    incremental      = false

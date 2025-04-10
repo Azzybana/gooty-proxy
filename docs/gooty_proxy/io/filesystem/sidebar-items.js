@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["default_auto_save_interval","default_data_dir","default_true"],"struct":["AppConfig","Filestore","FilestoreConfig","ProxiesContainer","SourcesContainer"]};

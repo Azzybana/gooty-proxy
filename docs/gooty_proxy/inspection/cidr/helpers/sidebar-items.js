@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["extract_network_from_cidr","extract_prefix_from_cidr","is_ip_in_cidr"]};

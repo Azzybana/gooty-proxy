@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["AppConfig","ApplicationConfig","HttpConfig","JudgeConfig","ProxiesConfig","StorageConfig"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["AUTO_SAVE_INTERVAL_SECS","MAX_PROXY_AGE_SECS"]};
