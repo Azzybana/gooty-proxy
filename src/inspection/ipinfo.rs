@@ -139,7 +139,8 @@ impl Sleuth {
     /// # Returns
     ///
     /// A new Sleuth instance configured with default settings
-    #[must_use] pub fn new() -> Self {
+    #[must_use]
+    pub fn new() -> Self {
         let client = Client::builder()
             .timeout(Duration::from_secs(10))
             .build()
@@ -163,7 +164,8 @@ impl Sleuth {
     /// # Returns
     ///
     /// A new Sleuth instance configured with the provided HTTP client
-    #[must_use] pub fn with_client(client: Client) -> Self {
+    #[must_use]
+    pub fn with_client(client: Client) -> Self {
         Sleuth {
             client: client.clone(),
             ownership_lookup: OwnershipLookup::with_client(client),
@@ -545,7 +547,8 @@ impl Sleuth {
     /// # Returns
     ///
     /// `true` if the IP is in the CIDR range, `false` otherwise
-    #[must_use] pub fn is_ip_in_cidr(&self, ip: &IpAddr, cidr_str: &str) -> bool {
+    #[must_use]
+    pub fn is_ip_in_cidr(&self, ip: &IpAddr, cidr_str: &str) -> bool {
         cidr::helpers::is_ip_in_cidr(ip, cidr_str)
     }
 }

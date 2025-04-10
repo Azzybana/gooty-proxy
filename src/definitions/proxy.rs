@@ -404,27 +404,44 @@ impl Proxy {
     pub fn update_with_ip_metadata(&mut self, metadata: IpMetadata) {
         // Update the hostname if not already set
         if self.hostname.is_none() {
-            self.hostname = metadata.hostname.clone();
+            if let Some(hostname_value) = &metadata.hostname {
+                self.hostname = Some(hostname_value.clone());
+            } else {
+                self.hostname = Some(String::new());
+            }
         }
 
         // Update CIDR information
         if let Some(network) = &metadata.network {
-            self.cidr = network.cidr.clone();
+            if let Some(ref cidr_value) = network.cidr {
+                self.cidr = Some(cidr_value.clone());
+            }
 
             // Update organization name
             if let Some(org) = &network.organization {
                 if let Some(name) = &org.name {
-                    self.organization = Some(name.clone());
+                    self.organization = Some(String::new());
+                    if let Some(org_name) = &mut self.organization {
+                        org_name.clone_from(name);
+                    }
                 }
 
                 // Update ASN
-                self.asn = org.asn.clone();
+                self.asn = Some(String::new());
+                if let Some(asn) = &mut self.asn {
+                    if let Some(org_asn) = &org.asn {
+                        asn.clone_from(org_asn);
+                    }
+                }
             }
 
             // Update location-based information
             if let Some(location) = &network.location {
                 if let Some(country) = &location.country {
-                    self.country = Some(country.clone());
+                    self.country = Some(String::new());
+                    if let Some(country_name) = &mut self.country {
+                        country_name.clone_from(country);
+                    }
                 }
             }
         }
@@ -443,11 +460,21 @@ impl Proxy {
 /// Helper functions for serialization and deserialization
 impl Proxy {
     /// Serializes the proxy to a JSON string
+    ///
+    /// # Errors
+    ///
+    /// This function will return an error if the serialization fails,
+    /// such as when the proxy contains data that cannot be represented in JSON.
     pub fn to_json(&self) -> Result<String, serde_json::Error> {
         serde_json::to_string(self)
     }
 
     /// Deserializes a proxy from a JSON string
+    ///
+    /// # Errors
+    ///
+    /// This function will return an error if the provided string is not valid JSON
+    /// or if it doesn't match the expected structure for a `Proxy` object.
     pub fn from_json(json: &str) -> Result<Self, serde_json::Error> {
         serde_json::from_str(json)
     }
