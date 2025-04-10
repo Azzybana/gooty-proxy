@@ -77,6 +77,11 @@ fn create_progress_bar(total: u64) -> ProgressBar {
 ///
 /// Returns Ok(()) if the verification process completes, regardless of individual proxy results.
 ///
+/// # Errors
+///
+/// Returns an error if there's a critical failure in the verification process.
+/// Individual proxy verification failures are handled internally and don't cause the entire operation to fail.
+///
 /// # Examples
 ///
 /// ```
@@ -94,9 +99,7 @@ pub async fn verify_proxies(
     }
 
     let total = proxies.len();
-    info!(
-        "Verifying {total} proxies with concurrency {concurrency}"
-    );
+    info!("Verifying {total} proxies with concurrency {concurrency}");
 
     // Create a progress bar and wrap in Arc for safe sharing
     let progress = Arc::new(create_progress_bar(total as u64));
@@ -150,9 +153,7 @@ pub async fn verify_proxies(
         "Verified {total}/{total} ({success_count} successful)"
     ));
 
-    info!(
-        "Verified {total}/{total} proxies ({success_count} successful)"
-    );
+    info!("Verified {total}/{total} proxies ({success_count} successful)");
 
     Ok(())
 }
@@ -172,6 +173,11 @@ pub async fn verify_proxies(
 ///
 /// Returns Ok(()) if the enrichment process completes, regardless of individual results.
 ///
+/// # Errors
+///
+/// Returns an error if there's a critical failure in the enrichment process.
+/// Individual proxy enrichment failures are handled internally and don't cause the entire operation to fail.
+///
 /// # Examples
 ///
 /// ```
@@ -189,9 +195,7 @@ pub async fn enrich_proxies(
     }
 
     let total = proxies.len();
-    info!(
-        "Enriching {total} proxies with concurrency {concurrency}"
-    );
+    info!("Enriching {total} proxies with concurrency {concurrency}");
 
     // Create a progress bar and wrap in Arc for safe sharing
     let progress = Arc::new(create_progress_bar(total as u64));
@@ -247,9 +251,7 @@ pub async fn enrich_proxies(
         "Enriched {total}/{total} ({success_count} successful)"
     ));
 
-    info!(
-        "Enriched {total}/{total} proxies ({success_count} successful)"
-    );
+    info!("Enriched {total}/{total} proxies ({success_count} successful)");
 
     Ok(())
 }
@@ -283,9 +285,7 @@ pub async fn fetch_from_sources(
     }
 
     let total = sources.len();
-    info!(
-        "Fetching from {total} sources with concurrency {concurrency}"
-    );
+    info!("Fetching from {total} sources with concurrency {concurrency}");
 
     // Create a progress bar and wrap in Arc for safe sharing
     let progress = Arc::new(create_progress_bar(total as u64));
